@@ -18,8 +18,8 @@ impl Field
 	pub fn
 	new
 	(
-		x: u32,
-		y: u32,
+		x: u8,
+		y: u8,
 		value: u32
 	)
 	-> Self
