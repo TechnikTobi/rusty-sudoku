@@ -17,7 +17,7 @@ Board
 	)
 	-> bool
 	{
-		self.get_fields().iter().any(|field| field.get_value() == Field::EMPTY_FIELD_VALUE)
+		!self.get_fields().iter().any(|field| field.get_value() == Field::EMPTY_FIELD_VALUE)
 	}
 
 	pub fn
@@ -153,5 +153,24 @@ Board
 			.find(|square| square.iter().any(|field| field.get_position() == pos))
 			.unwrap()
 			.clone()
+	}
+
+	pub fn
+	print
+	(
+		&self,
+	)
+	{
+		for y in 0..Self::MAX_Y
+		{
+			if y == 0 || y % 3 == 0 {println!("------------------------------")}
+			for x in 0..Self::MAX_X
+			{
+				if x == 0 || x % 3 == 0 {print!("|")}
+				print!(" {} ", self.get_field(Position::new(x, y)).unwrap().get_value());
+			}
+			print!("\n");
+		}
+		print!("\n");
 	}
 }
