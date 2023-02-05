@@ -41,7 +41,7 @@ impl Board
 	}
 
 	pub fn
-	get_field
+	get_mut_field
 	(
 		&mut self,
 		pos: Position
@@ -51,4 +51,14 @@ impl Board
 		self.fields.iter_mut().find(|field| field.get_position() == pos)
 	}
 
+	pub fn
+	get_field
+	(
+		&self,
+		pos: Position
+	)
+	-> Option<&Field>
+	{
+		self.fields.iter().find(|field| field.get_position() == pos)
+	}
 }
