@@ -29,6 +29,8 @@ impl Board
 	-> Option<Board>
 	{
 
+		if board.is_full() {return Some(board.clone());}
+
 		for i in 0..Self::MAX_X*Self::MAX_Y
 		{
 			let pos = Position::new(
@@ -38,7 +40,7 @@ impl Board
 
 			// Is the field at the current position already filled with a value?
 			// If so, continue. If the position is not in the board, return None
-			if let Some(field) = board.get_field(pos)
+			if let Some(field) = board.get_mut_field(pos)
 			{
 				if field.get_value() != Field::EMPTY_FIELD_VALUE
 				{
@@ -52,7 +54,7 @@ impl Board
 
 			// The field at the current position is not initialised
 			// Therefore, try different values to put there at random
-			let mut candidates: Vec<u32> = (1..9).collect();
+			let mut candidates: Vec<u32> = (1..10).collect();
 			candidates.shuffle(&mut thread_rng());
 
 			for value in candidates
@@ -67,13 +69,13 @@ impl Board
 				// If value is valid for this field, set it and make recursive
 				// call to fill the next field
 				// If this is successful, return the new board
-				board.get_field(pos).unwrap().set_value(value);
+				board.get_mut_field(pos).unwrap().set_value(value);
 				if let Some(new_board) = Self::add_random_number(board)
 				{
 					return Some(new_board);
 				}
 
-				board.get_field(pos).unwrap().set_value(Field::EMPTY_FIELD_VALUE);
+				board.get_mut_field(pos).unwrap().set_value(Field::EMPTY_FIELD_VALUE);
 			}
 
 			return None;
