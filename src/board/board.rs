@@ -29,4 +29,14 @@ impl Board
 		Board { fields }
 	}
 
+	pub fn
+	get_fields
+	(
+		&self
+	)
+	-> &Vec<Field>
+	{
+		return &self.fields;
+	}
+
 }
