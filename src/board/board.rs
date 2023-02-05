@@ -1,4 +1,5 @@
 use crate::board::field::*;
+use super::position::Position;
 
 #[derive(Clone)]
 pub struct
@@ -7,11 +8,11 @@ Board
 	fields: Vec<Field>
 }
 
-static MAX_X: u32 = 9;
-static MAX_Y: u32 = 9;
-
 impl Board
 {
+
+	pub const MAX_X: u8 = 9;
+	pub const MAX_Y: u8 = 9;
 
 	pub fn
 	new()
@@ -20,8 +21,8 @@ impl Board
 
 
 		let mut fields = Vec::new();
-		(0..MAX_Y).for_each(|y| 
-			(0..MAX_X).for_each(|x| 
+		(0..Self::MAX_Y).for_each(|y| 
+			(0..Self::MAX_X).for_each(|x| 
 				{ fields.push(Field::new(x, y, 0)); } 
 			) 
 		);
@@ -37,6 +38,17 @@ impl Board
 	-> &Vec<Field>
 	{
 		return &self.fields;
+	}
+
+	pub fn
+	get_field
+	(
+		&mut self,
+		pos: Position
+	)
+	-> Option<&mut Field>
+	{
+		self.fields.iter_mut().find(|field| field.get_position() == pos)
 	}
 
 }
