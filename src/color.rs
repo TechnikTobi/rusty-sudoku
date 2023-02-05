@@ -1,6 +1,7 @@
 use rand::Rng;
 
 
+#[derive(Copy, Clone)]
 pub struct
 Color
 {

@@ -1,6 +1,6 @@
 use crate::color::Color;
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(PartialEq, Eq, Hash, Copy, Clone)]
 pub struct
 Position
 {
@@ -8,6 +8,7 @@ Position
 	y: u32
 }
 
+#[derive(Copy, Clone)]
 pub struct
 Field
 {

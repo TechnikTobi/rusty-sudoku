@@ -1,5 +1,6 @@
 use crate::board::field::*;
 
+#[derive(Clone)]
 pub struct
 Board
 {
