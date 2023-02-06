@@ -81,6 +81,28 @@ Board
 	}
 
 	pub fn
+	get_rows
+	(
+		&self
+	)
+	-> Vec<Vec<&Field>>
+	{
+		let mut rows = Vec::new();
+
+		for y in 0..Self::MAX_Y
+		{
+			rows.push(
+				self.get_fields()
+					.iter()
+					.filter(|field| field.get_position().get_y() == y)
+					.collect::<Vec<&Field>>()
+			)
+		}
+
+		return rows;
+	}
+
+	pub fn
 	get_row
 	(
 		&self,
@@ -92,6 +114,28 @@ Board
 			.iter()
 			.filter(|field| field.get_position().get_x() == pos.get_x())
 			.collect::<Vec<&Field>>()
+	}
+
+	pub fn
+	get_columns
+	(
+		&self
+	)
+	-> Vec<Vec<&Field>>
+	{
+		let mut columns = Vec::new();
+
+		for x in 0..Self::MAX_X
+		{
+			columns.push(
+				self.get_fields()
+					.iter()
+					.filter(|field| field.get_position().get_x() == x)
+					.collect::<Vec<&Field>>()
+			)
+		}
+
+		return columns;
 	}
 
 	pub fn
