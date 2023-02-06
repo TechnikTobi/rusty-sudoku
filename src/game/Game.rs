@@ -28,8 +28,8 @@ Game
 		}
 	}
 
-	pub fn get_game_id (&self) -> &GameID { &self.id }
-	pub fn get_name (&self) -> &String { &self.name }
-	pub fn get_difficulty ( &self )	-> &u8 { &self.difficulty }
+	pub fn get_game_id    (&self) -> &GameID { &self.id }
+	pub fn get_name       (&self) -> &String { &self.name }
+	pub fn get_difficulty (&self) -> &u8     { &self.difficulty }
 
 }
