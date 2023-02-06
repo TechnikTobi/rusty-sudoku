@@ -11,6 +11,9 @@ impl Board
 	pub const MIN_VALUE: u8 = 1;
 	pub const MAX_VALUE: u8 = 9;
 
+	pub const MIN_DIFFICULTY: u8 = 1;
+	pub const MAX_DIFFICULTY: u8 = 60;
+
 	/// Create a new valid Sudoku board that is fully filled with numbers.
 	/// This board can then be used to remove numbers to end up with the final
 	/// board for playing a game.
@@ -54,7 +57,7 @@ impl Board
 
 			// The field at the current position is not initialised
 			// Therefore, try different values to put there at random
-			let mut candidates: Vec<u32> = (1..10).collect();
+			let mut candidates: Vec<u8> = (1..10).collect();
 			candidates.shuffle(&mut thread_rng());
 
 			for value in candidates
@@ -90,12 +93,42 @@ impl Board
 	generate_final_board
 	(
 		&self,
-		difficulty: u8
+		given_difficulty: u8
 	)
 	-> Board
 	{
-		let mut final_board = self.clone();
+		let mut working_board = self.clone();
+		let mut checkpoint_board = self.clone();
+		let difficulty = given_difficulty
+			.min(Self::MAX_DIFFICULTY)
+			.max(Self::MIN_DIFFICULTY);
 
-		return final_board;
+		let mut cleared_positions: Vec<Position> = Vec::new();
+		let mut reset_position = Position::random(Self::MAX_X, Self::MAX_Y);
+
+		for i in 0..difficulty
+		{
+			// If the board has only one solution, set a new checkpoint
+			// otherwise revert changes by cloning the checkpoint board
+			if working_board.solve() == 1
+			{
+				checkpoint_board = working_board.clone();
+			}
+			else
+			{
+				working_board = checkpoint_board.clone();
+			}
+
+			// Select a random position that hasn't been reset
+			while cleared_positions.contains(&reset_position)
+			{
+				reset_position = Position::random(Self::MAX_X, Self::MAX_Y);
+			}
+
+			working_board.get_mut_field(reset_position).unwrap().set_value(Field::EMPTY_FIELD_VALUE);
+			cleared_positions.push(reset_position);
+		}
+		
+		return checkpoint_board;
 	}
 }
