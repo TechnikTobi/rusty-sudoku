@@ -5,4 +5,4 @@ mod rule_row_values;
 mod rule_size;
 mod rule_square_values;
 
-mod validate;
+pub mod validate;
