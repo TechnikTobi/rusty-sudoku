@@ -6,21 +6,21 @@ pub struct
 Field
 {
 	position: Position,
-	value: u32,
+	value: u8,
 	color: Color
 }
 
 impl Field
 {
 
-	pub const EMPTY_FIELD_VALUE: u32 = 0;
+	pub const EMPTY_FIELD_VALUE: u8 = 0;
 
 	pub fn
 	new
 	(
 		x: u8,
 		y: u8,
-		value: u32
+		value: u8
 	)
 	-> Self
 	{
@@ -37,7 +37,7 @@ impl Field
 	(
 		&self
 	)
-	-> u32
+	-> u8
 	{
 		return self.value;
 	}
@@ -46,7 +46,7 @@ impl Field
 	set_value
 	(
 		&mut self,
-		new_value: u32
+		new_value: u8
 	)
 	{
 		self.value = new_value;
