@@ -1,4 +1,4 @@
-use crate::board::{board::Board, position::Position};
+use crate::board::board::Board;
 
 use super::validation_rule::IBoardValidationRule;
 
