@@ -87,6 +87,16 @@ impl Board
 		return None;
 	}
 
+	pub fn
+	bound_difficulty
+	(
+		given_difficulty: u8
+	)
+	-> u8
+	{
+		given_difficulty.min(Self::MAX_DIFFICULTY).max(Self::MIN_DIFFICULTY)
+	}
+
 
 	/// Take a fully filled valid Sudoku board and remove fields until
 	pub fn
@@ -99,9 +109,7 @@ impl Board
 	{
 		let mut working_board = self.clone();
 		let mut checkpoint_board = self.clone();
-		let difficulty = given_difficulty
-			.min(Self::MAX_DIFFICULTY)
-			.max(Self::MIN_DIFFICULTY);
+		let difficulty = Self::bound_difficulty(given_difficulty);
 
 		let mut cleared_positions: Vec<Position> = Vec::new();
 		let mut reset_position = Position::random(Self::MAX_X, Self::MAX_Y);
