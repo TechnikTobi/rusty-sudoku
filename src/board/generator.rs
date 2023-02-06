@@ -106,7 +106,7 @@ impl Board
 		let mut cleared_positions: Vec<Position> = Vec::new();
 		let mut reset_position = Position::random(Self::MAX_X, Self::MAX_Y);
 
-		for i in 0..difficulty
+		for _ in 0..difficulty
 		{
 			// If the board has only one solution, set a new checkpoint
 			// otherwise revert changes by cloning the checkpoint board
