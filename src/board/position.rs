@@ -1,3 +1,5 @@
+use rand::Rng;
+
 #[derive(PartialEq, Eq, Hash, Copy, Clone)]
 pub struct
 Position
@@ -19,6 +21,22 @@ Position
 	-> Position
 	{
 		Position { x: x, y: y }
+	}
+
+	pub fn
+	random
+	(
+		x_limit: u8,
+		y_limit: u8
+	)
+	-> Position
+	{
+		let mut random_generator = rand::thread_rng();
+		Position 
+		{ 
+			x: random_generator.gen_range(0..x_limit), 
+			y: random_generator.gen_range(0..y_limit)
+		}
 	}
 
 	pub fn
