@@ -21,6 +21,22 @@ Board
 	}
 
 	pub fn
+	position_is_empty
+	(
+		&self,
+		position: Position
+	)
+	-> bool
+	{
+		if !self.get_fields().iter().any(|field| field.get_position() == position)
+		{
+			return false;
+		}
+
+		return self.get_field(position).unwrap().get_value() == Field::EMPTY_FIELD_VALUE;
+	}
+
+	pub fn
 	get_max_x_pos
 	(
 		&self
