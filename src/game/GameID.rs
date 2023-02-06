@@ -1,6 +1,6 @@
 use std::{sync::atomic::{AtomicUsize, Ordering}};
 
-#[derive(PartialEq, Eq, Hash)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct
 GameID
 {
