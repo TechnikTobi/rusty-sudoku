@@ -163,13 +163,15 @@ Board
 	{
 		for y in 0..Self::MAX_Y
 		{
-			if y == 0 || y % 3 == 0 {println!("------------------------------")}
+			if y == 0 || y % 3 == 0 {println!("╬═══════╬═══════╬═══════╬")}
 			for x in 0..Self::MAX_X
 			{
-				if x == 0 || x % 3 == 0 {print!("|")}
-				print!(" {} ", self.get_field(Position::new(x, y)).unwrap().get_value());
+				if x == 0 || x % 3 == 0 {print!("║ ")}
+				print!("{} ", self.get_field(Position::new(x, y)).unwrap().get_value());
+				if x == Self::MAX_X-1 {print!("║")}
 			}
 			print!("\n");
+			if y == Self::MAX_Y-1 {println!("╬═══════╬═══════╬═══════╬")}
 		}
 		print!("\n");
 	}
