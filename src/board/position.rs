@@ -2,8 +2,8 @@
 pub struct
 Position
 {
-	x: u32,
-	y: u32
+	x: u8,
+	y: u8
 }
 
 impl
@@ -13,8 +13,8 @@ Position
 	pub fn
 	new
 	(
-		x: u32,
-		y: u32
+		x: u8,
+		y: u8
 	)
 	-> Position
 	{
@@ -26,7 +26,7 @@ Position
 	(
 		&self
 	)
-	-> u32
+	-> u8
 	{
 		return self.x;
 	}
@@ -36,7 +36,7 @@ Position
 	(
 		&self
 	)
-	-> u32
+	-> u8
 	{
 		return self.y;
 	}
