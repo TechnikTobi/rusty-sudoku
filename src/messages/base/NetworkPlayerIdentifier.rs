@@ -23,6 +23,16 @@ NetworkPlayerIdentifier
 		} 
 	}
 
+	pub fn
+	get_value
+	(
+		&self
+	)
+	-> &usize
+	{
+		&self.value
+	}
+
 	pub fn 
 	as_str
 	(
