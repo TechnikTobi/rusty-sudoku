@@ -1,4 +1,4 @@
-use crate::color::Color;
+use crate::color::Color::Color;
 use super::position::Position;
 
 #[derive(Copy, Clone)]

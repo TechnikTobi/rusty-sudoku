@@ -1,6 +1,6 @@
 use crate::board::board::Board;
 use crate::board::position::Position;
-use crate::color::Color;
+use crate::color::Color::Color;
 
 use super::EPlacementState::*;
 

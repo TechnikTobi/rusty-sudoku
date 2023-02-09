@@ -1,4 +1,4 @@
-use crate::{game::player::PlayerID::PlayerID, color::Color};
+use crate::{game::player::PlayerID::PlayerID, color::Color::Color};
 
 pub struct
 Player
