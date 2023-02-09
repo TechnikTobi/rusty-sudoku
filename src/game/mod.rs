@@ -3,8 +3,9 @@ mod EPlacementState;
 
 mod BoardManager;
 
-mod player;
+pub mod player;
 
 mod GameID;
 mod Game;
 mod GameController;
+pub mod GameControllerManager;
