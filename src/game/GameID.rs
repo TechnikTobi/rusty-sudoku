@@ -19,7 +19,7 @@ impl GameID
 	pub fn
 	from_network
 	(
-		network_id: NetworkGameIdentifier
+		network_id: &NetworkGameIdentifier
 	)
 	-> Self
 	{
@@ -27,6 +27,16 @@ impl GameID
 		{
 			value: network_id.get_value().clone()
 		}
+	}
+
+	pub fn
+	to_network
+	(
+		&self
+	)
+	-> NetworkGameIdentifier
+	{
+		NetworkGameIdentifier::new(self.value)
 	}
 
 	pub fn as_str (&self) -> String
