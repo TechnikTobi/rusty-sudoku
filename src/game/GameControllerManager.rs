@@ -58,5 +58,15 @@ GameControllerManager
 	{
 		self.games.get_mut(id)
 	}
-	
+
+	pub fn
+	get_iter
+	(
+		&self
+	)
+	-> std::collections::hash_map::Iter<'_, GameID, GameController>
+	{
+		self.games.iter()
+	}
+
 }
