@@ -1,38 +1,63 @@
+use std::sync::Mutex;
+
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use serde::{Serialize, Deserialize};
 
-use crate::board::*;
+use crate::game::player::PlayerID::PlayerID;
+use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
+use crate::messages::outgoing::PlayerRegistrationResponse::PlayerRegistrationResponse;
+use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
 
-#[get("/")]
-async fn hello() -> impl Responder {
-	HttpResponse::Ok().body("Hello world!")
-}
+use crate::server::Server::SudokuServer;
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-	HttpResponse::Ok().body(req_body)
-}
-
-pub async fn manual_hello() -> impl Responder {
-	HttpResponse::Ok().body("Hey there!")
-}
-
-#[derive(Serialize, Deserialize)]
-struct
-SomeData
-{
-	data1: String,
-	data2: String
-}
 
 #[post("/register")]
 async fn
 register
 (
-	request_body: web::Json<SomeData>
+	server: web::Data<Mutex<SudokuServer>>,
+	request_body: web::Json<PlayerRegistrationRequest>,
 )
 -> impl Responder
 {
-	// HttpResponse::Ok().body(format!("hi {}", request_body))
-	return web::Json(SomeData{ data1: request_body.data2.clone(), data2: request_body.data1.clone() });
+	let new_player_id = server
+		.lock()
+		.unwrap()
+		.get_mut_player_manager()
+		.add_player(request_body.get_player_name().clone())
+		.to_network();
+
+	return web::Json(PlayerRegistrationResponse::new(new_player_id));
 }
+
+#[post("/createGame")]
+async fn
+create_game
+(
+	server: web::Data<Mutex<SudokuServer>>,
+	request_body: web::Json<GameCreationRequest>,
+)
+-> impl Responder
+{
+	let new_game_id = server.lock().unwrap()
+		.get_mut_game_controller_manager()
+		.create_game(
+			PlayerID::from_network(request_body.get_player_id()), 
+			request_body.get_game_name().clone(), 
+			request_body.get_difficulty().clone()
+		)
+		.to_network();
+
+	return web::Json(server.lock().unwrap().generate_games_list_response());
+}
+
+#[get("/getGamesList")]
+async fn
+get_games_list
+(
+	server: web::Data<Mutex<SudokuServer>>
+)
+-> impl Responder
+{
+	return web::Json(server.lock().unwrap().generate_games_list_response());
+}
+
