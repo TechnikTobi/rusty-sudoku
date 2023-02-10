@@ -20,7 +20,8 @@ GamesListElement
 pub struct
 GamesListResponse
 {
-	Games: Vec<GamesListElement>
+	Games: Vec<GamesListElement>,
+	Message: String,
 }
 
 impl
@@ -34,7 +35,7 @@ GamesListElement
 		creator_name: String,
 		difficulty: u8,
 		ready_players: u8,
-		total_players: u8
+		total_players: u8,
 	)
 	-> Self
 	{
@@ -45,7 +46,7 @@ GamesListElement
 			CreatorName: creator_name, 
 			Difficulty: difficulty, 
 			ReadyPlayers: ready_players, 
-			TotalPlayers: total_players
+			TotalPlayers: total_players,
 		}
 	}
 }
@@ -54,19 +55,24 @@ impl
 IResponse
 for
 GamesListResponse
-{}
+{
+	fn get_message(&self) -> &String { &self.Message }
+}
 
 impl
 GamesListResponse
 {
 	pub fn
 	new
-	()
+	(
+		message: String
+	)
 	-> Self
 	{
 		GamesListResponse 
 		{ 
-			Games: Vec::new() 
+			Games: Vec::new(),
+			Message: message,
 		}
 	}
 

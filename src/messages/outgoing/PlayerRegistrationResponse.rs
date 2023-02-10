@@ -3,19 +3,21 @@ use serde::Serialize;
 use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
 
 use super::IResponse::IResponse;
-
 #[derive(Serialize, Debug)]
 pub struct
 PlayerRegistrationResponse
 {
-	PlayerID: NetworkPlayerIdentifier
+	PlayerID: NetworkPlayerIdentifier,
+	Message: String,
 }
 
 impl
 IResponse
 for
 PlayerRegistrationResponse
-{}
+{
+	fn get_message(&self) -> &String { &self.Message }
+}
 
 impl
 PlayerRegistrationResponse
@@ -24,13 +26,15 @@ PlayerRegistrationResponse
 	pub fn
 	new
 	(
-		PlayerID: NetworkPlayerIdentifier
+		player_id: NetworkPlayerIdentifier,
+		message: String,
 	)
 	-> Self
 	{
 		PlayerRegistrationResponse
 		{
-			PlayerID: PlayerID
+			PlayerID: player_id,
+			Message: message
 		}
 	}
 }

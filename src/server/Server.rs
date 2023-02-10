@@ -73,7 +73,7 @@ SudokuServer
 	)
 	-> GamesListResponse
 	{
-		let mut list = GamesListResponse::new();
+		let mut list = GamesListResponse::new(String::new());
 
 		for (id, controller) in self.game_controller_manager.get_iter()
 		{

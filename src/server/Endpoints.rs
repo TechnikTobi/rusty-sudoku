@@ -7,6 +7,7 @@ use crate::game::player::PlayerID::PlayerID;
 use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
 use crate::messages::incoming::GameJoinRequest::GameJoinRequest;
 use crate::messages::outgoing::PlayerRegistrationResponse::PlayerRegistrationResponse;
+use crate::messages::outgoing::IResponse::*;
 use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
 
 use crate::server::Server::SudokuServer;
@@ -28,7 +29,9 @@ register
 		.add_player(request_body.get_player_name().clone())
 		.to_network();
 
-	return web::Json(PlayerRegistrationResponse::new(new_player_id));
+	println!("{:?}", server.lock().unwrap().get_player_manager().get_player(&PlayerID::from_network(&new_player_id)));
+
+	return web::Json(PlayerRegistrationResponse::new(new_player_id, String::new()));
 }
 
 #[post("/createGame")]
