@@ -1,19 +1,25 @@
-mod endpoints;
 mod board;
+mod game;
 mod color;
+mod server;
+mod messages;
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use std::sync::Mutex;
 
-use crate::endpoints::*;
-use crate::board::*;
+use actix_web::{web::{Data}, App, HttpServer};
+use server::Server::SudokuServer;
+
+use crate::server::Endpoints::*;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
 	HttpServer::new(|| {
 		App::new()
-			.service(hello)
-			.service(echo)
-			.route("/hey", web::get().to(manual_hello))
+			.app_data(Data::new(Mutex::new(SudokuServer::new())))
+			.service(register)
+			.service(create_game)
+			.service(get_games_list)
+			.service(join_game)
 	})
 	.bind(("127.0.0.1", 8080))?
 	.run()
