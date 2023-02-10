@@ -1,0 +1,120 @@
+body{
+	background-color: black;
+	color: white;
+	font-family: Helvetica;
+}
+
+.field {
+	width: 50px;
+	height: 50px;
+	text-align: center;
+	line-height: 50px;
+
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	display: inline-block;
+
+	border-style: solid;
+	border-width: 1px;
+
+	/* border-color: black; */
+	border-color: white;
+
+	/* background-color: white; */
+	background-color: black;
+
+	box-shadow: none;
+
+	font-size: xx-large;
+}
+
+.number {
+	width: 50px;
+	height: 50px;
+	text-align: center;
+	line-height: 50px;
+	margin: 2px;
+
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	display: inline-block;
+
+	border-style: solid;
+	border-width: 1px;
+
+	/* border-color: black; */
+	border-color: white;
+
+	/* background-color: white; */
+	background-color: black;
+
+	box-shadow: none;
+
+	font-size: xx-large;
+}
+
+#numbers {
+	margin-top: 5px;
+	margin-left: 40px;
+	width: 60px;
+	float: left;
+	height: 519px;
+	display: flex;
+	align-items: center;
+}
+
+.row {
+	margin-top: 5px;
+}
+
+.squareDivider {
+	width: 2px;
+	height: 5px;
+	display: inline-block;
+}
+
+#message {
+	position: relative;
+}
+
+#game {
+	min-width: 800px;
+	line-height: 0px;
+	position: relative;
+}
+
+
+#game {
+	display: none;
+}
+
+#games {
+	display: none;
+}
+
+#ready {
+	display: none;
+}
+
+#board {
+	float: left;
+}
+
+#players {
+	float: left;
+	margin-right: 25px;
+	margin-top: 5px;
+	padding: 5px;
+	line-height: 1em;
+	background-color: #111111;
+}
