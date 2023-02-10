@@ -2,7 +2,7 @@ use std::{sync::atomic::{AtomicUsize, Ordering}};
 
 use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
 
-#[derive(PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
 pub struct
 GameID
 {

@@ -1,5 +1,6 @@
 use crate::{game::player::PlayerID::PlayerID, color::Color::Color};
 
+#[derive(Debug)]
 pub struct
 Player
 {
