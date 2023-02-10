@@ -2,8 +2,10 @@ use std::sync::Mutex;
 
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
+use crate::game::GameID::GameID;
 use crate::game::player::PlayerID::PlayerID;
 use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
+use crate::messages::incoming::GameJoinRequest::GameJoinRequest;
 use crate::messages::outgoing::PlayerRegistrationResponse::PlayerRegistrationResponse;
 use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
 
@@ -38,7 +40,7 @@ create_game
 )
 -> impl Responder
 {
-	let new_game_id = server.lock().unwrap()
+	server.lock().unwrap()
 		.get_mut_game_controller_manager()
 		.create_game(
 			PlayerID::from_network(request_body.get_player_id()), 
@@ -46,6 +48,24 @@ create_game
 			request_body.get_difficulty().clone()
 		)
 		.to_network();
+
+	return web::Json(server.lock().unwrap().generate_games_list_response());
+}
+
+#[post("/game/{GameID}/join")]
+async fn
+join_game
+(
+	server: web::Data<Mutex<SudokuServer>>,
+	request_body: web::Json<GameJoinRequest>,
+)
+-> impl Responder
+{
+	server.lock().unwrap()
+		.get_mut_game_controller_manager()
+		.get_mut_game(&GameID::from_network(request_body.get_game_id()))
+		.unwrap()
+		.add_player(PlayerID::from_network(request_body.get_player_id()));
 
 	return web::Json(server.lock().unwrap().generate_games_list_response());
 }
