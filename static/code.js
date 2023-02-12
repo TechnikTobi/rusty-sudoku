@@ -51,6 +51,7 @@ function registerPlayer()
 			// already set
 			if (listClient == null) 
 			{
+				/*
 				listClient = Stomp.over(new SockJS("/websocket"));
 				listClient.connect(
 					{}, 
@@ -62,6 +63,25 @@ function registerPlayer()
 						);
 					}
 				);
+				*/
+
+
+				const proto = location.protocol.startsWith('https') ? 'wss' : 'ws';
+				const wsUri = `${proto}://${location.host}/websocket`;
+
+				listClient = new WebSocket(wsUri);
+
+				listClient.onopen = () => {
+					console.log('Connected')
+				}
+				listClient.onmessage = (ev) => {
+					console.log('Received: ' + ev.data, 'message')
+				}
+		
+				listClient.onclose = () => {
+					console.log('Disconnected')
+					listClient = null
+				}
 			}
 
 			// Make a GET request for the current list of games
@@ -87,6 +107,7 @@ function registerPlayer()
 function createGame() 
 {
 
+	/*
 	// Create a new POST request
 	const request = new XMLHttpRequest();
 	request.open("POST", "/app/createGame", true);
@@ -106,6 +127,24 @@ function createGame()
 
 	// We don't really care about the response to this request as we already
 	// subscribed to the websocket for receiving updates on the newly created game
+
+	*/
+
+	// Decode the request as JSON
+	JSONdata = JSON.stringify(
+		{
+			"PlayerID" : playerID,
+			"GameName" : document.getElementById("gameName").value,
+			"Difficulty" : Math.max(Math.ceil(document.getElementById("gameDifficulty").value), 0)
+		}
+	);
+
+	if (listClient != null) 
+	{
+		listClient.send(JSONdata);
+	}
+
+
 }
 
 function newRefreshGames(data) 
@@ -165,15 +204,20 @@ function showGame(message) {
 	}
 }
 
-function joinGame(id) {
+function joinGame(id) 
+{
 	gameID = id.toString();
+	console.log("GameID: ", gameID);
 	const request = new XMLHttpRequest();
 	request.open("POST", "/app/game/" + gameID + "/join", true);
 	request.setRequestHeader("Content-Type", "application/json");
-	JSONdata = JSON.stringify({
-		"PlayerID" : playerID,
-		"GameID" : gameID
-	});
+
+	JSONdata = JSON.stringify(
+		{
+			"PlayerID" : playerID,
+			"GameID" : gameID
+		}
+	);
 	request.send(JSONdata);
 
 	request.onreadystatechange = (event) => {
