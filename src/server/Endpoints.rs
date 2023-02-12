@@ -12,7 +12,6 @@ use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequ
 
 use crate::server::Server::SudokuServer;
 
-
 #[post("/register")]
 async fn
 register
@@ -77,7 +76,7 @@ join_game
 async fn
 get_games_list
 (
-	server: web::Data<Mutex<SudokuServer>>
+	server: web::Data<Mutex<SudokuServer>>,
 )
 -> impl Responder
 {

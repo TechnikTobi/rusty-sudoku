@@ -4,7 +4,7 @@ use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
 
 use super::IRequest::IRequest;
 
-#[derive(Deserialize, Debug)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct
 GameCreationRequest
 {
