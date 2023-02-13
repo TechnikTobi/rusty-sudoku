@@ -4,7 +4,7 @@ use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
 
 use super::IResponse::IResponse;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct
 GamesListElement
 {
@@ -16,7 +16,7 @@ GamesListElement
 	TotalPlayers: u8,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct
 GamesListResponse
 {

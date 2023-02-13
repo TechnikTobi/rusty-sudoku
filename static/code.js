@@ -74,8 +74,15 @@ function registerPlayer()
 				listClient.onopen = () => {
 					console.log('Connected')
 				}
+
 				listClient.onmessage = (ev) => {
+					console.log("huh");
 					console.log('Received: ' + ev.data, 'message')
+				}
+
+				listClient.onerror = (ev) => {
+					console.log("An error occurded");
+					console.log(ev);
 				}
 		
 				listClient.onclose = () => {
@@ -142,6 +149,16 @@ function createGame()
 	if (listClient != null) 
 	{
 		listClient.send(JSONdata);
+	}
+
+	listClient.onmessage = (ev) => {
+		console.log("huh");
+		console.log('Received: ' + ev.data, 'message')
+	}
+
+	listClient.onerror = (ev) => {
+		console.log("An error occurded");
+		console.log(ev);
 	}
 
 
