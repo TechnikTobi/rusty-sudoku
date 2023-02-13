@@ -1,9 +1,10 @@
 console.log("Sudoku!");
 
-var listClient = null;
-var gameClient = null;
+const websocket_protocol = location.protocol.startsWith('https') ? 'wss' : 'ws';
+const websocket_uri = `${websocket_protocol}://${location.host}/websocket`;
+var websocket_client = null;
 
-var playerID = "";
+var playerID = null;
 var gameID = "";
 
 var selected_x = -1;
@@ -24,91 +25,88 @@ function resetAllSelected() {
 
 // const ding = new Audio("ding.mp3");
 
+function setup_websocket()
+{
+	websocket_client = new WebSocket(websocket_uri);
+
+	websocket_client.onopen = () => {
+
+		// Get the player name for registration
+		let registration_request = JSON.stringify(
+			{
+				"PlayerName" : document.getElementById("registerName").value
+			}
+		);
+
+		// Send the registration request & log completion of connection setup
+		websocket_client.send(registration_request);
+		console.log("Done with websocket connection setup!");
+	}
+
+	websocket_client.onerror = (ev) => {
+		console.log("An error occurded");
+		console.log(ev);
+	}
+
+	websocket_client.onmessage = (ev) => {
+		handle_websocket_message(ev.data);
+	}
+
+	websocket_client.onclose = () => {
+		console.log('Disconnected')
+		websocket_client = null
+	}
+}
+
+function handle_websocket_message
+(
+	data
+)
+{
+	if (playerID == null)
+	{
+		playerID = JSON.parse(data)["PlayerID"];
+	}
+	else
+	{
+		console.log('Received some data:');
+		console.log(data);
+	}
+}
+
 // Register player with name via POST request
 function registerPlayer() 
 {
-	// Create new POST request for registration
-	const request = new XMLHttpRequest();
-	request.open("POST", "/app/register", true);
-	request.setRequestHeader("Content-Type", "application/json");
-	request.send(JSON.stringify(
-		{
-			"PlayerName" : document.getElementById("registerName").value
-		}
-	));
 
-	// What to do upon receiving a response to the request
-	request.onreadystatechange = (event) => 
+	if (websocket_client == null)
 	{
-		// If the operation is completed (i.e. code 4)
-		if (request.readyState == 4) 
+		setup_websocket()
+	}
+
+	// playerID = ...? 
+	// // Parse the response and extract the PlayerID
+	// const responseData = JSON.parse(request.responseText);
+	// playerID = responseData["PlayerID"];
+
+	// newRefreshGames(data)
+	// ???
+
+	// Make a GET request for the current list of games
+	const gamesRequest = new XMLHttpRequest();
+	gamesRequest.open("GET", "/app/getGamesList", true);
+	gamesRequest.send();
+	gamesRequest.onreadystatechange = (event) => 
+	{
+		if(gamesRequest.readyState == 4) 
 		{
-			// Parse the response and extract the PlayerID
-			const responseData = JSON.parse(request.responseText);
-			playerID = responseData["PlayerID"];
-
-			// Subscribe to the socket for receiving the games list if not 
-			// already set
-			if (listClient == null) 
-			{
-				/*
-				listClient = Stomp.over(new SockJS("/websocket"));
-				listClient.connect(
-					{}, 
-					function (frame) 
-					{
-						listClient.subscribe(
-							"/gamesList", 
-							function (message) {const data = message.body; newRefreshGames(data)}
-						);
-					}
-				);
-				*/
-
-
-				const proto = location.protocol.startsWith('https') ? 'wss' : 'ws';
-				const wsUri = `${proto}://${location.host}/websocket`;
-
-				listClient = new WebSocket(wsUri);
-
-				listClient.onopen = () => {
-					console.log('Connected')
-				}
-
-				listClient.onmessage = (ev) => {
-					console.log("huh");
-					console.log('Received: ' + ev.data, 'message')
-				}
-
-				listClient.onerror = (ev) => {
-					console.log("An error occurded");
-					console.log(ev);
-				}
-		
-				listClient.onclose = () => {
-					console.log('Disconnected')
-					listClient = null
-				}
-			}
-
-			// Make a GET request for the current list of games
-			const gamesRequest = new XMLHttpRequest();
-			gamesRequest.open("GET", "/app/getGamesList", true);
-			gamesRequest.send();
-			gamesRequest.onreadystatechange = (event) => 
-			{
-				if(gamesRequest.readyState == 4) 
-				{
-					console.log(gamesRequest.responseText);
-					newRefreshGames(gamesRequest.responseText);
-				}
-			}
-
-			// Hide the registration elements and show the games section
-			document.getElementById("registration").style.display = "none";
-			document.getElementById("games").style.display = "block";
+			console.log(gamesRequest.responseText);
+			newRefreshGames(gamesRequest.responseText);
 		}
 	}
+
+	// Hide the registration elements and show the games section
+	document.getElementById("registration").style.display = "none";
+	document.getElementById("games").style.display = "block";
 }
 
 function createGame() 
@@ -146,21 +144,10 @@ function createGame()
 		}
 	);
 
-	if (listClient != null) 
+	if (websocket_client != null) 
 	{
-		listClient.send(JSONdata);
+		websocket_client.send(JSONdata);
 	}
-
-	listClient.onmessage = (ev) => {
-		console.log("huh");
-		console.log('Received: ' + ev.data, 'message')
-	}
-
-	listClient.onerror = (ev) => {
-		console.log("An error occurded");
-		console.log(ev);
-	}
-
 
 }
 

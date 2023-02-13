@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use super::IRequest::IRequest;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct
 PlayerRegistrationRequest
 {

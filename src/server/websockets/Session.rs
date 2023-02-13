@@ -1,23 +1,19 @@
-use actix::{prelude::*};
+use actix::{fut, prelude::*};
 use actix_broker::{BrokerIssue, BrokerSubscribe};
 use actix_web::web;
 use actix_web_actors::ws;
 
 use std::{sync::Mutex, collections::HashMap};
 
-use crate::{server::Server::SudokuServer, messages::{base::{NetworkPlayerIdentifier::NetworkPlayerIdentifier, NetworkGameIdentifier::NetworkGameIdentifier}, incoming::GameCreationRequest::GameCreationRequest, outgoing::GamesListResponse::GamesListResponse}, game::player::PlayerID::PlayerID};
+use crate::game::player::PlayerID::PlayerID;
+use crate::messages::outgoing::PlayerRegistrationResponse::PlayerRegistrationResponse;
+use crate::server::Server::SudokuServer;
+use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
+use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
+use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
+use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
 
-#[derive(Clone, Message)]
-#[rtype(result = "()")]
-pub struct GameCreationRequestMessage(pub GameCreationRequest);
-
-#[derive(Clone, Message, Debug)]
-#[rtype(result = "()")]
-pub struct GamesListMessage(pub GamesListResponse);
-
-#[derive(Clone, Message, Debug)]
-#[rtype(result = "()")]
-pub struct GameUpdateMessage();
+use super::Messages::*;
 
 #[derive(Default)]
 pub struct
@@ -69,65 +65,10 @@ WebsocketSession
 			server: server
 		}
 	}
-
-	pub fn
-	send_games_list_message
-	(
-		&self
-	)
-	{
-		let message = GamesListMessage(
-			self.server.as_ref().unwrap().lock().unwrap().generate_games_list_response()
-		);
-
-		self.issue_system_async(message);
-	}
 }
 
-// impl 
-// Handler<ChatMessage>
-// for 
-// WebsocketSession
-// {
-// 	type Result = ();
-
-// 	fn handle
-// 	(
-// 		&mut self, 
-// 		message: ChatMessage, 
-// 		context: &mut Self::Context
-// 	) 
-// 	{
-// 		context.text(message.0);
-// 	}
-// }
-
-// impl
-// Handler<GameCreationRequestMessage>
-// for
-// WebsocketSession
-// {
-// 	type Result = ();
-
-// 	fn
-// 	handle
-// 	(
-// 		&mut self,
-// 		message: GameCreationRequestMessage,
-// 		context: &mut Self::Context
-// 	)
-// 	{
-// 		let request = message.0;
-// 		self.server.as_ref().unwrap().lock().unwrap().get_mut_game_controller_manager().create_game(
-// 			PlayerID::from_network(request.get_player_id()), 
-// 			request.get_game_name().clone(), 
-// 			request.get_difficulty().clone()
-// 		);
-// 	}
-// }
-
 impl
-Handler<GamesListMessage>
+Handler<JsonMessage>
 for
 WebsocketSession
 {
@@ -137,11 +78,11 @@ WebsocketSession
 	handle
 	(
 		&mut self,
-		message: GamesListMessage,
+		message: JsonMessage,
 		context: &mut Self::Context
 	)
 	{
-		context.text(serde_json::to_string(&message.0).unwrap());
+		context.text(message.0);
 	}
 }
 
@@ -153,41 +94,80 @@ WebsocketSession
 	fn handle
 	(
 		&mut self, 
-		message: Result<ws::Message, ws::ProtocolError>, 
+		incoming_message: Result<ws::Message, ws::ProtocolError>, 
 		context: &mut Self::Context
 	) 
 	{
-		let msg = match message 
+		let message = match incoming_message 
 		{
 			Err(_) => {
 				context.stop();
 				return;
 			}
-			Ok(msg) => msg,
+			Ok(message) => message,
 		};
 
-		println!("WEBSOCKET MESSAGE {:?}", msg);
+		println!("WEBSOCKET MESSAGE {:?}", message);
 
-		match msg 
+		match message 
 		{
-			ws::Message::Text(text) => {
+			ws::Message::Text(message_text) => {
 
-				let msg = text.trim();
+				let text = message_text.trim();
 
-
-				if let Ok(request) = serde_json::from_str::<GameCreationRequest>(msg)
+				// Try different parsings of the data inside the 
+				if let Ok(request) = serde_json::from_str::<PlayerRegistrationRequest>(text)
 				{
-					self.server.as_ref().unwrap().lock().unwrap().get_mut_game_controller_manager().create_game(
-						PlayerID::from_network(request.get_player_id()), 
-						request.get_game_name().clone(), 
-						request.get_difficulty().clone()
+					// Create a new player in the SudokuServer
+					let new_player_id = self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap()
+						.get_mut_player_manager()
+						.add_player(request.get_player_name().to_owned());
+
+					// Create a new internal registration message to send to the
+					// Websocket Server instance
+					let registration = InternalPlayerRegistrationMessage(
+						new_player_id.to_network(),
+						context.address().recipient()
 					);
 
-					self.send_games_list_message();
+					// Send the internal registration to the Websocket Server
+					WebSocketServer::from_registry().send(registration)
+						.into_actor(self)
+						.then(|_, _, _| { fut::ready(()) })
+						.wait(context);
+				}
+				else if let Ok(request) = serde_json::from_str::<GameCreationRequest>(text)
+				{
+					// Create a new game in the SudokuServer
+					let _new_game_id = self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap()
+						.get_mut_game_controller_manager()
+						.create_game(
+							PlayerID::from_network(request.get_player_id()), 
+							request.get_game_name().clone(), 
+							request.get_difficulty().clone()
+					);
+
+					// Send the internal registration to the Websocket Server
+					let games_list_message = InternalGameCreationMessage(
+						self.server.as_ref().unwrap().lock().unwrap().generate_games_list_response()
+					);
+					WebSocketServer::from_registry().send(games_list_message)
+						.into_actor(self)
+						.then(|_, _, _| { fut::ready(()) })
+						.wait(context);
 				}
 				else
 				{
-					println!("{:?}", msg);
+					println!("Some other kind of message...");
+					println!("{:?}", text);
 				}
 			}
 			ws::Message::Close(reason) => {
@@ -206,29 +186,19 @@ WebsocketSession
 pub struct
 WebSocketServer
 {
-	clients: HashMap<NetworkPlayerIdentifier, Recipient<GamesListMessage>>,
+	// clients: HashMap<NetworkPlayerIdentifier, Recipient<WebsocketGamesList>>,
 	// games_clients: HashMap<NetworkGameIdentifier, Vec<Recipient<GameUpdateMessage>>>,
+	clients: HashMap<NetworkPlayerIdentifier, Recipient<JsonMessage>>,
 }
 
 impl
 WebSocketServer
 {
-
-	pub fn
-	add_client
-	(
-		&mut self,
-		client: Recipient<GamesListMessage>
-	)
-	{
-
-	}
-
 	pub fn 
 	send_to_all
 	(
 		&self,
-		message: GamesListMessage
+		message: JsonMessage
 	)
 	{
 		for (_, client) in &self.clients
@@ -238,6 +208,9 @@ WebSocketServer
 	}
 }
 
+impl SystemService for WebSocketServer {}
+impl Supervised for WebSocketServer {}
+
 impl 
 Actor 
 for 
@@ -245,33 +218,79 @@ WebSocketServer
 {
 	type Context = Context<Self>;
 
-	fn started(&mut self, ctx: &mut Self::Context) {
-		// self.subscribe_system_async::<GamesListMessage>(ctx);
-		// self.subscribe_system_async::<GameUpdateMessage>(ctx);
-		self.subscribe_system_async::<GameCreationRequestMessage>(ctx);
+	fn 
+	started
+	(
+		&mut self, 
+		context: &mut Self::Context
+	) 
+	{
+		self.subscribe_system_async::<InternalPlayerRegistrationMessage>(context);
+		self.subscribe_system_async::<InternalGameCreationMessage>(context);
 	}
 }
 
 impl 
-Handler<GamesListMessage> 
+Handler<InternalPlayerRegistrationMessage> 
 for 
 WebSocketServer 
 {
-	type Result = MessageResult<GamesListMessage>;
+	type Result = MessageResult<InternalPlayerRegistrationMessage>;
 
-	fn handle(&mut self, msg: GamesListMessage, _ctx: &mut Self::Context) -> Self::Result {
-		let JoinRoom(room_name, client_name, client) = msg;
+	fn handle(
+		&mut self, 
+		msg: InternalPlayerRegistrationMessage, 
+		_ctx: &mut Self::Context
+	) 
+	-> Self::Result 
+	{
+		// Deconstruct the internal message
+		let InternalPlayerRegistrationMessage(network_player_id, recipient) = msg;
 
-		let id = self.add_client_to_room(&room_name, None, client);
-		let join_msg = format!(
-			"{} joined {room_name}",
-			client_name.unwrap_or_else(|| "anon".to_string()),
-		);
+		// Add the recipient to the list of clients
+		self.clients.insert(network_player_id.clone(), recipient.clone());
+		
+		// Send them back their player ID
+		let send_result = recipient.try_send(JsonMessage(
+			serde_json::to_string(&PlayerRegistrationResponse::new(network_player_id, "".to_string())).unwrap(), 
+			None
+		));
 
-		self.send_chat_message(&room_name, &join_msg, id);
-		MessageResult(id)
+		// If that results in an error, currently handle this by printing something to CLI
+		if let Err(error) = send_result
+		{
+			println!("Oh no! Something went wrong with sending the new player their ID! {:?}", error);
+		}
+
+		// Still not sure why we return... this
+		MessageResult(())
 	}
 }
 
-impl SystemService for WebSocketServer {}
-impl Supervised for WebSocketServer {}
+impl 
+Handler<InternalGameCreationMessage> 
+for 
+WebSocketServer 
+{
+	type Result = MessageResult<InternalGameCreationMessage>;
+
+	fn handle(
+		&mut self, 
+		msg: InternalGameCreationMessage, 
+		_ctx: &mut Self::Context
+	) 
+	-> Self::Result 
+	{
+		// Deconstruct the internal message
+		let InternalGameCreationMessage(games_list) = msg;
+
+		// Send to EVERYONE
+		self.send_to_all(JsonMessage(
+			serde_json::to_string(&games_list).unwrap(), 
+			None
+		));
+
+		// See above
+		MessageResult(())
+	}
+}
