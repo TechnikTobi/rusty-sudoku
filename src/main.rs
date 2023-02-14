@@ -54,10 +54,7 @@ main
 			.app_data(Data::new(Mutex::new(SudokuServer::new())))
 			.service(
 				web::scope("/app")
-					// .service(register)
-					// .service(create_game)
 					.service(get_games_list)
-					// .service(join_game)
 			)
 			.service(web::resource("/websocket").to(websocket))
 			.service(actix_files::Files::new("/", "./static").show_files_listing().index_file("index.html"))
