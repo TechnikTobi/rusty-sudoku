@@ -9,6 +9,7 @@ PlayerID
 	value: usize
 }
 
+#[allow(non_upper_case_globals)]
 static PlayerIDcounter: AtomicUsize = AtomicUsize::new(1);
 
 impl PlayerID
@@ -39,6 +40,4 @@ impl PlayerID
 		NetworkPlayerIdentifier::new(self.value)
 	}
 
-	pub fn as_str (&self) -> String
-	{ self.value.to_string() }
 }
