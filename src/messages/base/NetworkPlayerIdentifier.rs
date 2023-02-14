@@ -32,14 +32,4 @@ NetworkPlayerIdentifier
 	{
 		&self.value
 	}
-
-	pub fn 
-	as_str
-	(
-		&self
-	) 
-	-> String
-	{ 
-		self.value.to_string() 
-	}
 }
