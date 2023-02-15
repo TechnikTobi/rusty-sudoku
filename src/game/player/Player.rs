@@ -1,4 +1,4 @@
-use crate::{game::player::PlayerID::PlayerID, color::Color::Color};
+use crate::{game::player::PlayerID::PlayerID, color::Color::Color, messages::base::PlayerListElement::PlayerListElement};
 
 #[derive(Debug)]
 pub struct
@@ -30,4 +30,19 @@ Player
 	pub fn get_player_id (&self) -> &PlayerID { &self.id }
 	pub fn get_color     (&self) -> &Color    { &self.color }
 	pub fn get_name      (&self) -> &String   { &self.name }
+
+	pub fn
+	to_network
+	(
+		&self,
+		points: u64
+	)
+	-> PlayerListElement
+	{
+		PlayerListElement::new(
+			self.name.to_owned(), 
+			self.color.get_hex_string(),
+			points
+		)
+	}
 }

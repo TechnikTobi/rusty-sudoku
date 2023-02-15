@@ -1,4 +1,4 @@
-use crate::color::Color::Color;
+use crate::{color::Color::Color, messages::base::NetworkField::NetworkField};
 use super::position::Position;
 
 #[derive(Copy, Clone)]
@@ -80,5 +80,20 @@ impl Field
 	-> Position
 	{
 		return self.position;
+	}
+
+	pub fn
+	to_network
+	(
+		&self
+	)
+	-> NetworkField
+	{
+		NetworkField::new(
+			self.position.get_x(), 
+			self.position.get_y(), 
+			self.value.to_owned(),
+			self.color.get_hex_string()
+		)
 	}
 }
