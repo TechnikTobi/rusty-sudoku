@@ -6,7 +6,7 @@ PlayerListElement
 {
 	Name: String,
 	Color: String,
-	Points: u64,
+	Points: i64,
 }
 
 impl
@@ -17,7 +17,7 @@ PlayerListElement
 	(
 		name: String,
 		color: String,
-		points: u64,
+		points: i64,
 	)
 	-> Self
 	{

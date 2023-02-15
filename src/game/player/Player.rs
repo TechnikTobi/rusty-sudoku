@@ -35,7 +35,7 @@ Player
 	to_network
 	(
 		&self,
-		points: u64
+		points: i64
 	)
 	-> PlayerListElement
 	{
