@@ -4,10 +4,13 @@ use actix_web_actors::ws;
 
 use std::sync::Mutex;
 
+use crate::game::GameID::GameID;
 use crate::game::player::PlayerID::PlayerID;
-use crate::server::Server::SudokuServer;
-use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
 use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
+use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
+use crate::messages::incoming::GameJoinLeaveRequest::GameJoinLeaveRequest;
+
+use crate::server::Server::SudokuServer;
 
 use super::Messages::*;
 use super::Server::WebSocketServer;
@@ -161,6 +164,26 @@ WebsocketSession
 						.into_actor(self)
 						.then(|_, _, _| { fut::ready(()) })
 						.wait(context);
+				}
+				else if let Ok(request) = serde_json::from_str::<GameJoinLeaveRequest>(text)
+				{
+
+					// TODO:
+					// - De-Join Client from any other game
+
+					// Add the client to the game
+					self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap()
+						.get_mut_game_controller_manager()
+						.get_mut_game(&GameID::from_network(request.get_game_id()))
+						.unwrap()
+						.join_player(PlayerID::from_network(request.get_player_id()));
+
+					
+					
 				}
 				else
 				{

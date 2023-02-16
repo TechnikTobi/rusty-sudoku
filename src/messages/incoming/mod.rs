@@ -9,4 +9,4 @@ pub mod PlayerRegistrationRequest;
 pub mod GameCreationRequest;
 
 #[allow(non_snake_case)]
-pub mod GameJoinRequest;
+pub mod GameJoinLeaveRequest;

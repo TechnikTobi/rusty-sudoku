@@ -7,7 +7,7 @@ use super::IRequest::IRequest;
 
 #[derive(Deserialize, Debug)]
 pub struct
-GameJoinRequest
+GameJoinLeaveRequest
 {
 	PlayerID: NetworkPlayerIdentifier,
 	GameID: NetworkGameIdentifier
@@ -16,11 +16,11 @@ GameJoinRequest
 impl
 IRequest
 for
-GameJoinRequest
+GameJoinLeaveRequest
 {}
 
 impl
-GameJoinRequest
+GameJoinLeaveRequest
 {
 	pub fn
 	get_player_id
