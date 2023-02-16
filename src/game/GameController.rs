@@ -3,6 +3,7 @@ use std::hash::Hash;
 
 use crate::game::Game::Game;
 use crate::game::player::PlayerID::PlayerID;
+use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
 use crate::messages::outgoing::GameStateResponse::GameStateResponse;
 
 use super::BoardManager::BoardManager;
@@ -100,6 +101,19 @@ GameController
 		}
 
 		return state;
+	}
+
+	pub fn
+	get_player_id_list
+	(
+		&self
+	)
+	-> Vec<NetworkPlayerIdentifier>
+	{
+		self.points
+			.iter()
+			.map(|(id, _)| id.to_network())
+			.collect::<Vec<NetworkPlayerIdentifier>>()
 	}
 
 }
