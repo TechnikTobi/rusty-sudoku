@@ -2,9 +2,11 @@ use std::collections::HashMap;
 
 use crate::game::Game::Game;
 use crate::game::player::PlayerID::PlayerID;
+use crate::messages::outgoing::GameStateResponse::GameStateResponse;
 
 use super::BoardManager::BoardManager;
 use super::EGameState::*;
+use super::player::PlayerManager::PlayerManager;
 
 pub struct
 GameController
@@ -59,6 +61,35 @@ GameController
 		{
 			self.points.insert(new_player, Self::POINTS_UNREADY);
 		}
+	}
+
+	pub fn
+	to_network
+	(
+		&self,
+		player_manager: &PlayerManager,
+		message: String
+
+	)
+	-> GameStateResponse
+	{
+		let mut state = GameStateResponse::empty(message);
+
+		for field in self.board_manager.get_play_board().get_fields()
+		{
+			state.add_field(field.to_network());
+		}
+
+		for (player_id, points) in &self.points
+		{
+			if let Some(player) = player_manager.get_player(&player_id)
+			{
+				state.add_player(player.to_network(points.to_owned()));
+			}
+			
+		}
+
+		return state;
 	}
 
 }
