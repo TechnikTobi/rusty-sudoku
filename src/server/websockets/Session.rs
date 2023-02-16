@@ -115,6 +115,12 @@ WebsocketSession
 
 				let text = message_text.trim();
 
+				let immut_server = self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap();
+
 				// Try different parsings of the data inside the 
 				if let Ok(request) = serde_json::from_str::<PlayerRegistrationRequest>(text)
 				{
@@ -180,13 +186,6 @@ WebsocketSession
 						.get_mut_game(&GameID::from_network(request.get_game_id()))
 						.unwrap()
 						.toggle_player(PlayerID::from_network(request.get_player_id()));
-
-					// Saving lines 
-					let immut_server = self.server
-						.as_ref()
-						.unwrap()
-						.lock()
-						.unwrap();
 
 					// Send an internal message that something regarding the players has changed
 					let games_list = immut_server.generate_games_list_response();
