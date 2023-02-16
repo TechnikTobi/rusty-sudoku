@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::hash::Hash;
 
 use crate::game::Game::Game;
 use crate::game::player::PlayerID::PlayerID;
@@ -51,16 +52,38 @@ GameController
 	pub fn get_mut_game  (&mut self) -> &mut Game { &mut self.game }
 
 	pub fn
-	add_player
+	join_player
 	(
 		&mut self,
 		new_player: PlayerID
 	)
 	{
-		if self.is_joinable()
+		if !self.is_joinable()
 		{
-			self.points.insert(new_player, Self::POINTS_UNREADY);
+			return;
 		}
+
+		if self.points.contains_key(&new_player)
+		{
+			return;
+		}
+
+		self.points.insert(new_player, Self::POINTS_UNREADY);
+	}
+
+	pub fn
+	leave_player
+	(
+		&mut self,
+		player: PlayerID
+	)
+	{
+		if !self.is_joinable()
+		{
+			return;
+		}
+
+		self.points.remove(&player);
 	}
 
 	pub fn
