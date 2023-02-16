@@ -167,7 +167,6 @@ WebsocketSession
 				}
 				else if let Ok(request) = serde_json::from_str::<GameJoinLeaveRequest>(text)
 				{
-
 					// TODO:
 					// - De-Join Client from any other game
 
@@ -180,9 +179,32 @@ WebsocketSession
 						.get_mut_game_controller_manager()
 						.get_mut_game(&GameID::from_network(request.get_game_id()))
 						.unwrap()
-						.join_player(PlayerID::from_network(request.get_player_id()));
+						.toggle_player(PlayerID::from_network(request.get_player_id()));
 
-					
+					// Saving lines 
+					let immut_server = self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap();
+
+					// Send an internal message that something regarding the players has changed
+					let games_list = immut_server.generate_games_list_response();
+
+					let game = immut_server
+						.get_game_controller_manager()
+						.get_game(&GameID::from_network(request.get_game_id()))
+						.unwrap();
+
+					let game_state = game.to_network(immut_server.get_player_manager(), "".to_string());
+					let player_list = game.get_player_id_list();
+
+					let message = InternalGameJoinLeaveMessage(games_list, game_state, player_list);
+
+					WebSocketServer::from_registry().send(message)
+						.into_actor(self)
+						.then(|_, _, _| { fut::ready(()) })
+						.wait(context);
 					
 				}
 				else

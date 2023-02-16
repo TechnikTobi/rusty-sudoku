@@ -36,6 +36,23 @@ WebSocketServer
 			}
 		}
 	}
+
+	pub fn
+	send_game_message
+	(
+		&self,
+		message: JsonMessage,
+		players: Vec<NetworkPlayerIdentifier>
+	)
+	{
+		for player in players
+		{
+			if let Err(error) = self.clients.get(&player).unwrap().try_send(message.to_owned())
+			{
+				println!("Oh no! Something went wrong with sending the game state! {:?}", error);
+			}
+		}
+	}
 }
 
 impl SystemService for WebSocketServer {}
@@ -129,6 +146,40 @@ WebSocketServer
 			serde_json::to_string(&games_list).unwrap(), 
 			None
 		));
+
+		// See above
+		MessageResult(())
+	}
+}
+
+impl
+Handler<InternalGameJoinLeaveMessage>
+for
+WebSocketServer
+{
+	type Result = MessageResult<InternalGameJoinLeaveMessage>;
+
+	fn handle(
+		&mut self, 
+		msg: InternalGameJoinLeaveMessage, 
+		_ctx: &mut Self::Context
+	) 
+	-> Self::Result 
+	{
+		// Deconstruct the internal message
+		let InternalGameJoinLeaveMessage(games_list, game_state, player_list) = msg;
+
+		// 1. Send to EVERYONE the new list of games (due to change of numbers in table)
+		self.send_to_all(JsonMessage(
+			serde_json::to_string(&games_list).unwrap(), 
+			None
+		));
+
+		// 2. Send updated game state to relevant clients
+		self.send_game_message(
+			JsonMessage(serde_json::to_string(&game_state).unwrap(), None),
+			player_list
+		);
 
 		// See above
 		MessageResult(())
