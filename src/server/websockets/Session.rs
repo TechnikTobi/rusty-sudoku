@@ -128,7 +128,8 @@ WebsocketSession
 					// Websocket Server instance
 					let registration = InternalPlayerRegistrationMessage(
 						new_player_id.to_network(),
-						context.address().recipient()
+						context.address().recipient(),
+						self.server.as_ref().unwrap().lock().unwrap().generate_games_list_response()
 					);
 
 					// Send the internal registration to the Websocket Server

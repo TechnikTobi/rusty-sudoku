@@ -75,24 +75,34 @@ WebSocketServer
 	-> Self::Result 
 	{
 		// Deconstruct the internal message
-		let InternalPlayerRegistrationMessage(network_player_id, recipient) = msg;
+		let InternalPlayerRegistrationMessage(network_player_id, recipient, games_list) = msg;
 
 		// Add the recipient to the list of clients
 		self.clients.insert(network_player_id.clone(), recipient.clone());
 		
-		// Send them back their player ID
-		let send_result = recipient.try_send(JsonMessage(
+		// Prepare messages containing the new player's ID and a list of current games
+		let player_id_message = JsonMessage(
 			serde_json::to_string(&PlayerRegistrationResponse::new(network_player_id, "".to_string())).unwrap(), 
 			None
-		));
+		);
+		let games_list_message = JsonMessage(
+			serde_json::to_string(&games_list).unwrap(), 
+			None
+		);
 
+		// Send the messages
 		// If that results in an error, currently handle this by printing something to CLI
-		if let Err(error) = send_result
+		if let Err(error) = recipient.try_send(player_id_message)
 		{
 			println!("Oh no! Something went wrong with sending the new player their ID! {:?}", error);
 		}
 
-		// Still not sure why we return... this
+		if let Err(error) = recipient.try_send(games_list_message)
+		{
+			println!("Oh no! Something went wrong with sending the new player the list of games! {:?}", error);
+		}
+
+		// Still not sure why we return... this... thing
 		MessageResult(())
 	}
 }

@@ -12,7 +12,7 @@ pub struct JsonMessage(pub String, pub Option<Recipient<JsonMessage>>);
 // INTERNAL
 #[derive(Clone, Message, Debug)]
 #[rtype(result = "()")]
-pub struct InternalPlayerRegistrationMessage(pub NetworkPlayerIdentifier, pub Recipient<JsonMessage>);
+pub struct InternalPlayerRegistrationMessage(pub NetworkPlayerIdentifier, pub Recipient<JsonMessage>, pub GamesListResponse);
 
 #[derive(Clone, Message, Debug)]
 #[rtype(result = "()")]
