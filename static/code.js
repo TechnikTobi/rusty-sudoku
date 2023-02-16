@@ -63,11 +63,34 @@ function handle_websocket_message
 	data
 )
 {
-	if (playerID == null)
-	{
-		playerID = JSON.parse(data)["PlayerID"];
+
+	var handled = false;
+	let parsed_data = JSON.parse(data);
+
+	if (playerID == null && "PlayerID" in parsed_data)                          // Got a response to player registration request
+	{		
+		playerID = parsed_data["PlayerID"];
+
+		handled = true;
 	}
-	else
+	
+	if ("Games" in parsed_data)                                                 // Update regarding list of games
+	{
+		newRefreshGames(parsed_data)
+
+		handled = true;
+	}
+	
+	if (false) // What to put in here?
+	{
+		// Update the state of the current game
+
+
+		handled = true;
+	}
+	
+
+	if (!handled)
 	{
 		console.log('Received some data:');
 		console.log(data);
@@ -83,27 +106,6 @@ function registerPlayer()
 		setup_websocket()
 	}
 
-	// playerID = ...? 
-	// // Parse the response and extract the PlayerID
-	// const responseData = JSON.parse(request.responseText);
-	// playerID = responseData["PlayerID"];
-
-	// newRefreshGames(data)
-	// ???
-
-	// Make a GET request for the current list of games
-	const gamesRequest = new XMLHttpRequest();
-	gamesRequest.open("GET", "/app/getGamesList", true);
-	gamesRequest.send();
-	gamesRequest.onreadystatechange = (event) => 
-	{
-		if(gamesRequest.readyState == 4) 
-		{
-			console.log(gamesRequest.responseText);
-			newRefreshGames(gamesRequest.responseText);
-		}
-	}
-
 	// Hide the registration elements and show the games section
 	document.getElementById("registration").style.display = "none";
 	document.getElementById("games").style.display = "block";
@@ -111,30 +113,6 @@ function registerPlayer()
 
 function createGame() 
 {
-
-	/*
-	// Create a new POST request
-	const request = new XMLHttpRequest();
-	request.open("POST", "/app/createGame", true);
-	request.setRequestHeader("Content-Type", "application/json");
-
-	// Decode the request as JSON
-	JSONdata = JSON.stringify(
-		{
-			"PlayerID" : playerID,
-			"GameName" : document.getElementById("gameName").value,
-			"Difficulty" : Math.max(Math.ceil(document.getElementById("gameDifficulty").value), 0)
-		}
-	);
-
-	// Send the request
-	request.send(JSONdata);
-
-	// We don't really care about the response to this request as we already
-	// subscribed to the websocket for receiving updates on the newly created game
-
-	*/
-
 	// Decode the request as JSON
 	JSONdata = JSON.stringify(
 		{
@@ -148,32 +126,51 @@ function createGame()
 	{
 		websocket_client.send(JSONdata);
 	}
-
 }
 
-function newRefreshGames(data) 
+function newRefreshGames(games) 
 {
-	// Parse the received data & clear the existing table
-	const json = JSON.parse(data);
+	// Clear the existing table
 	document.getElementById("gamesTableBody").innerHTML = "";
 
 	// Insert the data into the table
-	for(let index in json["Games"]) 
+	for(let index in games["Games"])
 	{
 		// Get the information about a specific game
-		let game = json["Games"][index];
+		let game = games["Games"][index];
 
 		// Insert a new row into the table
 		var row = document.getElementById("gamesTableBody").insertRow(-1);
+
+		
 
 		// Fill the newly created row
 		row.insertCell(0).innerHTML = game["CreatorName"];
 		row.insertCell(1).innerHTML = game["GameName"];
 		row.insertCell(2).innerHTML = game["Difficulty"];
 		row.insertCell(3).innerHTML = (game["ReadyPlayers"]).toString() + "/" + (game["TotalPlayers"]).toString();
-		row.insertCell(4).innerHTML = "<button onClick='joinGame(" + game["GameID"] + ")'>Join</button>";
+		row.insertCell(4).innerHTML = "<button onClick='joinGame(" + game["GameID"]["value"] + ")'>Join</button>";
 	}
 }
+
+function joinGame(id) 
+{
+	JSONdata = JSON.stringify(
+		{
+			"PlayerID" : playerID,
+			"GameID" : gameID
+		}
+	);
+
+	if (websocket_client != null) 
+	{
+		websocket_client.send(JSONdata);
+	}
+
+	document.getElementById("games").style.display = "none";
+	document.getElementById("ready").style.display = "block";
+}
+
 
 function showGame(message) {
 	// ding.play();
@@ -204,41 +201,6 @@ function showGame(message) {
 			playerNameCell.innerHTML = player["PlayerName"];
 			playerNameCell.style.color = "#" + player["Color"];
 			row.insertCell(1).innerHTML = player["Points"];
-		}
-	}
-}
-
-function joinGame(id) 
-{
-	gameID = id.toString();
-	console.log("GameID: ", gameID);
-	const request = new XMLHttpRequest();
-	request.open("POST", "/app/game/" + gameID + "/join", true);
-	request.setRequestHeader("Content-Type", "application/json");
-
-	JSONdata = JSON.stringify(
-		{
-			"PlayerID" : playerID,
-			"GameID" : gameID
-		}
-	);
-	request.send(JSONdata);
-
-	request.onreadystatechange = (event) => {
-		if(request.readyState == 4) {
-			if(gameClient == null) {
-				gameClient = Stomp.over(new SockJS("/websocket"));
-				gameClient.connect(
-					{}, 
-					function (frame) 
-					{
-						gameClient.subscribe("/game/" + gameID + "/update", function (message) {showGame(message)});
-					}
-				);
-			}
-
-			document.getElementById("games").style.display = "none";
-			document.getElementById("ready").style.display = "block";
 		}
 	}
 }
