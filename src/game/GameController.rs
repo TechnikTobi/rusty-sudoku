@@ -116,4 +116,14 @@ GameController
 			.collect::<Vec<NetworkPlayerIdentifier>>()
 	}
 
+	pub fn
+	count_players
+	(
+		&self
+	)
+	-> usize
+	{
+		self.points.len()
+	}
+
 }

@@ -148,7 +148,7 @@ function newRefreshGames(games)
 		row.insertCell(0).innerHTML = game["CreatorName"];
 		row.insertCell(1).innerHTML = game["GameName"];
 		row.insertCell(2).innerHTML = game["Difficulty"];
-		row.insertCell(3).innerHTML = (game["ReadyPlayers"]).toString() + "/" + (game["TotalPlayers"]).toString();
+		row.insertCell(3).innerHTML = (game["TotalPlayers"]).toString();
 		row.insertCell(4).innerHTML = "<button onClick='toggleGame(" + game["GameID"]["value"] + ")'>Join</button>";
 	}
 }
