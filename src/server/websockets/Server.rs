@@ -1,5 +1,6 @@
 use actix::{prelude::*};
 use actix_broker::{BrokerSubscribe};
+use actix_web::web::Json;
 
 use std::collections::HashMap;
 
@@ -24,17 +25,32 @@ WebSocketServer
 	pub fn 
 	send_to_all
 	(
-		&self,
+		&mut self,
 		message: JsonMessage
 	)
 	{
-		for (_, client) in &self.clients
+
+		let mut to_be_removed = Vec::new();
+
+		for (id, client) in &self.clients
 		{
 			if let Err(error) = client.try_send(message.to_owned())
 			{
-				println!("Oh no! Something went wrong with sending data to all players! {:?}", error);
+				println!("Oh no! Something went wrong with sending data to a player! {:?}", error);
+	
+				match error
+				{
+					SendError::Closed(_) => {
+						to_be_removed.push(id.to_owned());
+					},
+					_ => {
+						()
+					}
+				}
 			}
 		}
+
+		to_be_removed.iter().for_each(|id| { self.clients.remove(id); });
 	}
 
 	pub fn
