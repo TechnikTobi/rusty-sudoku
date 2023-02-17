@@ -4,7 +4,7 @@ use serde::Serialize;
 pub struct
 PlayerListElement
 {
-	Name: String,
+	PlayerName: String,
 	Color: String,
 	Points: i64,
 }
@@ -23,7 +23,7 @@ PlayerListElement
 	{
 		PlayerListElement
 		{
-			Name: name,
+			PlayerName: name,
 			Color: color,
 			Points: points,
 		}
