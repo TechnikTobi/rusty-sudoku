@@ -73,6 +73,11 @@ function handle_websocket_message
 	{		
 		playerID = parsed_data["PlayerID"];
 
+		if (playerID == null)
+		{
+			websocket_client.close();
+		}
+
 		handled = true;
 	}
 	
@@ -83,10 +88,10 @@ function handle_websocket_message
 		handled = true;
 	}
 	
-	if (false) // What to put in here?
+	if ("State" in parsed_data)
 	{
 		// Update the state of the current game
-
+		showGame(parsed_data)
 
 		handled = true;
 	}
@@ -134,7 +139,7 @@ function newRefreshGames(games)
 	document.getElementById("gamesTableBody").innerHTML = "";
 
 	// Insert the data into the table
-	for(let index in games["Games"])
+	for (let index in games["Games"])
 	{
 		// Get the information about a specific game
 		let game = games["Games"][index];
@@ -199,38 +204,59 @@ function toggleGame(id)
 	websocket_client.send(JSONdata);
 }
 
-function showGame(message) {
-	// ding.play();
-	const json = JSON.parse(message.body);
-	console.log(json);
-	if("Message" in json) {
-		document.getElementById("message").innerHTML = json["Message"];
-	}
-	if("Fields" in json) 
+function showGame(game)
+{
+
+	console.log(game);
+
+	if ("Message" in game)
 	{
+		document.getElementById("message").innerHTML = game["Message"];
+	}
+
+	if ("Fields" in game)
+	{
+		// Show the board
 		document.getElementById("game").style.display = "block";
 
-		for(let index in json["Fields"]) 
+		// Fill the board
+		for (let index in game["Fields"])
 		{
-			let field = json["Fields"][index];
-			let value = parseInt(field["Value"]);
-			document.getElementById("x" + field["X"] + "y" + field["Y"]).innerHTML = (value == 0 ? "&nbsp;" : value);
-			document.getElementById("x" + field["X"] + "y" + field["Y"]).style.backgroundColor = "#" + field["Color"];
-		}
+			let field = game["Fields"][index];
 
+			let value = parseInt(field["Value"]);
+			document.getElementById(
+				"x" + field["X"] 
+				+ "y" + field["Y"]
+			).innerHTML = (value == 0 ? "&nbsp;" : value);
+
+			document.getElementById(
+				"x" + field["X"] 
+				+ "y" + field["Y"]
+			).style.backgroundColor = "#" + field["Color"];
+		}
+	}
+
+	if ("Players" in game)
+	{
+		// Show the list of players
 		document.getElementById("playersTableBody").innerHTML = "";
 
-		for(let index in json["Players"]) 
+		for (let index in game["Players"]) 
 		{
-			let player = json["Players"][index];
+			let player = game["Players"][index];
+
 			var row = document.getElementById("playersTableBody").insertRow(-1);
 			var playerNameCell = row.insertCell(0);
+			
 			playerNameCell.innerHTML = player["PlayerName"];
 			playerNameCell.style.color = "#" + player["Color"];
+
 			row.insertCell(1).innerHTML = player["Points"];
 		}
 	}
 }
+
 
 function readyForGame() 
 {
