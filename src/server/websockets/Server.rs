@@ -201,3 +201,31 @@ WebSocketServer
 		MessageResult(())
 	}
 }
+
+impl
+Handler<InternalGameUpdateMessage>
+for
+WebSocketServer
+{
+	type Result = MessageResult<InternalGameUpdateMessage>;
+
+	fn handle(
+		&mut self, 
+		msg: InternalGameUpdateMessage, 
+		_ctx: &mut Self::Context
+	) 
+	-> Self::Result 
+	{
+		// Deconstruct the internal message
+		let InternalGameUpdateMessage(game_state, player_list) = msg;
+
+		// Send updated game state to relevant clients
+		self.send_game_message(
+			JsonMessage(serde_json::to_string(&game_state).unwrap(), None),
+			player_list
+		);
+
+		// See above
+		MessageResult(())
+	}
+}

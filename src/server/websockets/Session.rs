@@ -6,9 +6,11 @@ use std::sync::Mutex;
 
 use crate::game::GameID::GameID;
 use crate::game::player::PlayerID::PlayerID;
+use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
 use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
 use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
 use crate::messages::incoming::GameJoinLeaveRequest::GameJoinLeaveRequest;
+use crate::messages::incoming::GameStartRequest::GameStartRequest;
 
 use crate::server::Server::SudokuServer;
 
@@ -64,6 +66,34 @@ WebsocketSession
 		{
 			server: server
 		}
+	}
+
+	fn
+	issue_internal_game_update_message
+	(
+		&mut self,
+		context: &mut <WebsocketSession as Actor>::Context,
+		game_id: &NetworkGameIdentifier,
+	)
+	{
+		let immut_server = self.server
+			.as_ref()
+			.unwrap()
+			.lock()
+			.unwrap();
+
+		let (game_state, player_list) = immut_server
+			.get_game_controller_manager()
+			.get_game(&GameID::from_network(game_id))
+			.unwrap()
+			.to_network(immut_server.get_player_manager(), "".to_string());
+
+		let message = InternalGameUpdateMessage(game_state, player_list);
+
+		WebSocketServer::from_registry().send(message)
+			.into_actor(self)
+			.then(|_, _, _| { fut::ready(()) })
+			.wait(context);	
 	}
 }
 
@@ -190,13 +220,12 @@ WebsocketSession
 					// Send an internal message that something regarding the players has changed
 					let games_list = immut_server.generate_games_list_response();
 
-					let game = immut_server
+					let (game_state, player_list) = immut_server
 						.get_game_controller_manager()
 						.get_game(&GameID::from_network(request.get_game_id()))
-						.unwrap();
-
-					let game_state = game.to_network(immut_server.get_player_manager(), "".to_string());
-					let player_list = game.get_player_id_list();
+						.unwrap()
+						.to_network(immut_server.get_player_manager(), "".to_string());
+					
 
 					let message = InternalGameJoinLeaveMessage(games_list, game_state, player_list);
 
@@ -206,6 +235,23 @@ WebsocketSession
 						.wait(context);
 					
 				}
+				else if let Ok(request) = serde_json::from_str::<GameStartRequest>(text)
+				{
+					self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap()
+						.get_mut_game_controller_manager()
+						.get_mut_game(&GameID::from_network(request.get_game_id()))
+						.unwrap()
+						.start();
+
+					self.issue_internal_game_update_message(
+						context, 
+						request.get_game_id()
+					);
+				}
 				else
 				{
 					println!("Some other kind of message...");
@@ -213,10 +259,15 @@ WebsocketSession
 				}
 			}
 			ws::Message::Close(reason) => {
+
+
+
 				context.close(reason);
 				context.stop();
 			}
 			_ => {}
 		}
 	}
+
+	
 }

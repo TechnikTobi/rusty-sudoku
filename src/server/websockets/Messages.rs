@@ -19,6 +19,13 @@ pub struct InternalPlayerRegistrationMessage(pub NetworkPlayerIdentifier, pub Re
 #[rtype(result = "()")]
 pub struct InternalGameCreationMessage(pub GamesListResponse);
 
+// Idea: Replace this message by two of the adjacent ones, i.e.
+// - InternalGameCreationMessage
+// - InternalGameUpdateMessage
 #[derive(Clone, Message, Debug)]
 #[rtype(result = "()")]
 pub struct InternalGameJoinLeaveMessage(pub GamesListResponse, pub GameStateResponse, pub Vec<NetworkPlayerIdentifier>);
+
+#[derive(Clone, Message, Debug)]
+#[rtype(result = "()")]
+pub struct InternalGameUpdateMessage(pub GameStateResponse, pub Vec<NetworkPlayerIdentifier>);

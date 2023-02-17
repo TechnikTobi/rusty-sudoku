@@ -75,6 +75,15 @@ GameController
 	}
 
 	pub fn
+	start
+	(
+		&mut self
+	)
+	{
+		self.game.set_state(EGameState::ONGOING);
+	}
+
+	pub fn
 	to_network
 	(
 		&self,
@@ -82,7 +91,7 @@ GameController
 		message: String
 
 	)
-	-> GameStateResponse
+	-> (GameStateResponse, Vec<NetworkPlayerIdentifier>)
 	{
 		let mut state = GameStateResponse::empty(message);
 
@@ -103,7 +112,7 @@ GameController
 			
 		}
 
-		return state;
+		return (state, self.get_player_id_list());
 	}
 
 	pub fn

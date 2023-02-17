@@ -10,3 +10,6 @@ pub mod GameCreationRequest;
 
 #[allow(non_snake_case)]
 pub mod GameJoinLeaveRequest;
+
+#[allow(non_snake_case)]
+pub mod GameStartRequest;
