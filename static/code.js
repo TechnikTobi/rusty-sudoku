@@ -5,13 +5,14 @@ const websocket_uri = `${websocket_protocol}://${location.host}/websocket`;
 var websocket_client = null;
 
 var playerID = null;
-var gameID = "";
+var gameID = null;
 
 var selected_x = -1;
 var selected_y = -1;
 var selected_value = -1;
 
 const selected_shadow = "0 0 0.7em white";
+var ding = new Audio("ding.mp3");
 
 function resetFieldSelected() {
 	selected_x = -1;
@@ -22,8 +23,6 @@ function resetAllSelected() {
 	resetFieldSelected();
 	selected_value = -1;
 }
-
-// const ding = new Audio("ding.mp3");
 
 function setup_websocket()
 {
@@ -53,6 +52,7 @@ function setup_websocket()
 	}
 
 	websocket_client.onclose = () => {
+
 		console.log('Disconnected')
 		websocket_client = null
 	}
@@ -63,6 +63,8 @@ function handle_websocket_message
 	data
 )
 {
+
+	ding.play();
 
 	var handled = false;
 	let parsed_data = JSON.parse(data);
@@ -103,7 +105,8 @@ function registerPlayer()
 
 	if (websocket_client == null)
 	{
-		setup_websocket()
+		setup_websocket();
+		console.assert(websocket_client != null);
 	}
 
 	// Hide the registration elements and show the games section
@@ -113,7 +116,7 @@ function registerPlayer()
 
 function createGame() 
 {
-	// Decode the request as JSON
+	// Decode the request as JSON and send it via the websocket
 	JSONdata = JSON.stringify(
 		{
 			"PlayerID" : playerID,
@@ -122,10 +125,7 @@ function createGame()
 		}
 	);
 
-	if (websocket_client != null) 
-	{
-		websocket_client.send(JSONdata);
-	}
+	websocket_client.send(JSONdata);	
 }
 
 function newRefreshGames(games) 
@@ -149,28 +149,45 @@ function newRefreshGames(games)
 		row.insertCell(1).innerHTML = game["GameName"];
 		row.insertCell(2).innerHTML = game["Difficulty"];
 		row.insertCell(3).innerHTML = (game["ReadyPlayers"]).toString() + "/" + (game["TotalPlayers"]).toString();
-		row.insertCell(4).innerHTML = "<button onClick='joinGame(" + game["GameID"]["value"] + ")'>Join</button>";
+		row.insertCell(4).innerHTML = "<button onClick='toggleGame(" + game["GameID"]["value"] + ")'>Join</button>";
 	}
 }
 
-function joinGame(id) 
+function toggleGame(id) 
 {
+
+	// Depending on the current value, either set or reset the GameID variable
+	if (gameID == null)
+	{
+		// Packing the raw value into a dictionary
+		id = {"value": id};
+
+		gameID = id;
+		document.getElementById("games").style.display = "none";
+		document.getElementById("ready").style.display = "block";
+	}
+	else
+	{
+		// As the leave button does not have a GameID stored we need to read its
+		// value from the variable
+		id = gameID;
+
+		gameID = null;
+		document.getElementById("games").style.display = "block";
+		document.getElementById("ready").style.display = "none";
+	}
+
+	// Construct the JSON message
 	JSONdata = JSON.stringify(
 		{
 			"PlayerID" : playerID,
-			"GameID" : gameID
+			"GameID" : id
 		}
 	);
 
-	if (websocket_client != null) 
-	{
-		websocket_client.send(JSONdata);
-	}
-
-	document.getElementById("games").style.display = "none";
-	document.getElementById("ready").style.display = "block";
+	// Send the message
+	websocket_client.send(JSONdata);
 }
-
 
 function showGame(message) {
 	// ding.play();
