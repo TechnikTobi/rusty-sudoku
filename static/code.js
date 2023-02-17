@@ -164,7 +164,12 @@ function toggleGame(id)
 
 		gameID = id;
 		document.getElementById("games").style.display = "none";
+		document.getElementById("game").style.display = "block";
 		document.getElementById("ready").style.display = "block";
+
+		// Hide the board again because we don't want to show it yet
+		document.getElementById("board").style.display = "none";
+		document.getElementById("numbers").style.display = "none";
 	}
 	else
 	{
@@ -174,7 +179,12 @@ function toggleGame(id)
 
 		gameID = null;
 		document.getElementById("games").style.display = "block";
+
+		// Hide all the other stuff
+		document.getElementById("game").style.display = "none";
+		document.getElementById("board").style.display = "none";
 		document.getElementById("ready").style.display = "none";
+		document.getElementById("numbers").style.display = "none";
 	}
 
 	// Construct the JSON message
