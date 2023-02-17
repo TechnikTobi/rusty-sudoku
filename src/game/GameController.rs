@@ -86,9 +86,12 @@ GameController
 	{
 		let mut state = GameStateResponse::empty(message);
 
-		for field in self.board_manager.get_play_board().get_fields()
+		if !self.is_joinable()
 		{
-			state.add_field(field.to_network());
+			for field in self.board_manager.get_play_board().get_fields()
+			{
+				state.add_field(field.to_network());
+			}
 		}
 
 		for (player_id, points) in &self.points
