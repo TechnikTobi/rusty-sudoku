@@ -4,8 +4,8 @@ use serde::Serialize;
 pub enum
 NetworkGameState
 {
-    UNDEFINED,
-    JOINABLE,
-    ONGOING,
-    FINISHED
+	UNDEFINED,
+	JOINABLE,
+	ONGOING,
+	FINISHED
 }
