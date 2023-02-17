@@ -53,7 +53,7 @@ impl Color
 	)
 	-> String
 	{
-		format!("{:X}{:X}{:X}", self.red, self.green, self.blue)
+		format!("{:02X}{:02X}{:02X}", self.red, self.green, self.blue)
 	}
 
 }
