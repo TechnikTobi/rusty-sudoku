@@ -1,8 +1,6 @@
 use std::collections::HashMap;
-use std::hash::Hash;
 
-use crate::board::position::Position;
-use crate::color::Color::Color;
+use crate::board::field::Field;
 use crate::game::Game::Game;
 use crate::game::player::PlayerID::PlayerID;
 use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
@@ -150,9 +148,8 @@ GameController
 	set_field
 	(
 		&mut self,
-		position: Position,
-		value: u8,
-		player: Player
+		field: Field,
+		player: &Player
 	)
 	{
 		if 
@@ -163,8 +160,8 @@ GameController
 		}
 
 		let new_points = match self.board_manager.set_field(
-			position, 
-			value, 
+			field.get_position(), 
+			field.get_value(),
 			player.get_color().to_owned()
 		)
 		{
