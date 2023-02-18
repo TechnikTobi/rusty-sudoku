@@ -1,6 +1,7 @@
 use serde::Serialize;
+use serde::Deserialize;
 
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct
 NetworkField
 {
@@ -31,4 +32,8 @@ NetworkField
 			Color: color 
 		}
 	}
+
+	pub fn get_x     (&self) -> u8 { self.X }
+	pub fn get_y     (&self) -> u8 { self.Y }
+	pub fn get_value (&self) -> u8 { self.Value }
 }
