@@ -9,6 +9,7 @@ GameID
 	value: usize
 }
 
+#[allow(non_upper_case_globals)]
 static GameIDcounter: AtomicUsize = AtomicUsize::new(1);
 
 impl GameID
@@ -38,7 +39,4 @@ impl GameID
 	{
 		NetworkGameIdentifier::new(self.value)
 	}
-
-	pub fn as_str (&self) -> String
-	{ self.value.to_string() }
 }

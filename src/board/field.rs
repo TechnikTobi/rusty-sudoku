@@ -53,16 +53,6 @@ impl Field
 	}
 
 	pub fn
-	get_color
-	(
-		&self
-	)
-	-> Color
-	{
-		return self.color;
-	}
-
-	pub fn
 	set_color
 	(
 		&mut self,

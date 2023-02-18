@@ -215,6 +215,8 @@ Board
 			.clone()
 	}
 
+
+	#[allow(dead_code)]
 	pub fn
 	print
 	(

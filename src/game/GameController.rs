@@ -159,17 +159,12 @@ GameController
 			return;
 		}
 
-		let new_points = match self.board_manager.set_field(
+		let new_points = self.board_manager.set_field(
 			field.get_position(), 
 			field.get_value(),
 			player.get_color().to_owned()
-		)
-		{
-			EPlacementState::CORRECT => 100,
-			EPlacementState::INCORRECT => -100,
-			EPlacementState::INVALID => 0
-		} + self.points.get(player.get_player_id()).unwrap();
-
+		).points() + self.points.get(player.get_player_id()).unwrap();
+		
 		self.points.insert(player.get_player_id().to_owned(), new_points);
 	}
 

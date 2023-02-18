@@ -1,4 +1,3 @@
-use actix::fut::ready;
 use serde::Serialize;
 
 use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;

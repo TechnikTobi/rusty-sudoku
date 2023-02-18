@@ -1,14 +1,8 @@
 use std::sync::Mutex;
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-
-use crate::game::GameID::GameID;
-use crate::game::player::PlayerID::PlayerID;
-use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
-use crate::messages::incoming::GameJoinLeaveRequest::GameJoinLeaveRequest;
-use crate::messages::outgoing::PlayerRegistrationResponse::PlayerRegistrationResponse;
-use crate::messages::outgoing::IResponse::*;
-use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
+use actix_web::get;
+use actix_web::web;
+use actix_web::Responder;
 
 use crate::server::Server::SudokuServer;
 

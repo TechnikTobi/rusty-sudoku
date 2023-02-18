@@ -1,34 +1,32 @@
+#[allow(non_snake_case)]
 mod board;
+
+#[allow(non_snake_case)]
 mod game;
+
+#[allow(non_snake_case)]
 mod color;
+
+#[allow(non_snake_case)]
 mod server;
+
+#[allow(non_snake_case)]
 mod messages;
 
-use std::sync::{Mutex, Arc};
-use std::path::PathBuf;
+
+
+use std::sync::Mutex;
 
 use actix_files;
 use actix_web::{web::{Data}, App, HttpServer};
-use actix_web::{middleware::Logger, Error, Responder};
+use actix_web::Error;
+use actix_web::Responder;
 use actix_web_actors::ws;
-use actix_files::NamedFile;
 use actix_web::{web, HttpRequest, Result};
 
 use server::Server::SudokuServer;
 use server::Endpoints::*;
 use server::websockets::Session::WebsocketSession;
-
-async fn 
-index
-(
-	_req: HttpRequest
-) 
--> Result<NamedFile> 
-{
-	let path: PathBuf = "./static/index.html".parse().unwrap();
-	Ok(NamedFile::open(path)?)
-}
-
 
 async fn
 websocket
