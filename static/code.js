@@ -147,8 +147,6 @@ function newRefreshGames(games)
 		// Insert a new row into the table
 		var row = document.getElementById("gamesTableBody").insertRow(-1);
 
-		
-
 		// Fill the newly created row
 		row.insertCell(0).innerHTML = game["CreatorName"];
 		row.insertCell(1).innerHTML = game["GameName"];
@@ -257,33 +255,32 @@ function showGame(game)
 	}
 }
 
-
-function readyForGame() 
+function toggleReadyGame() 
 {
-	// Create POST request
-	const request = new XMLHttpRequest();
-	request.open("POST", "/app/game/" + gameID + "/ready", true);
-	request.setRequestHeader("Content-Type", "application/json");
-
-	// Decode the request as JSON
 	JSONdata = JSON.stringify(
 		{
-			"PlayerID" : playerID,
+			"ReadyPlayerID" : playerID,
 			"GameID" : gameID
 		}
 	);
 
-	// Send the request
-	request.send(JSONdata);
+	websocket_client.send(JSONdata);
 
-	// What to do upon receiving a response
-	request.onreadystatechange = (event) => 
+	if (document.getElementById("readyButton").innerHTML == "Ready")
 	{
-		// If the operation is complete, hide the ready elements (?)
-		if(request.readyState == 4) 
-		{
-			document.getElementById("ready").style.display = "none";
-		}
+		// Sent to server that we are READY
+
+		// Change button text to "Unready" and hide leave button
+		document.getElementById("readyButton").innerHTML = "Unready";
+		document.getElementById("leaveButton").style = "none";
+	}
+	else
+	{
+		// Sent to the server that we are NOT READY
+
+		// Change button text to "Ready" and show leave button
+		document.getElementById("readyButton").innerHTML = "Ready";
+		document.getElementById("leaveButton").style = "block";
 	}
 }
 
