@@ -7,7 +7,7 @@ use super::IRequest::IRequest;
 
 #[derive(Deserialize, Debug)]
 pub struct
-GameReadyRequest
+GameReadyUnreadyRequest
 {
 	ReadyPlayerID: NetworkPlayerIdentifier,
 	GameID: NetworkGameIdentifier,
@@ -16,11 +16,11 @@ GameReadyRequest
 impl
 IRequest
 for
-GameReadyRequest
+GameReadyUnreadyRequest
 {}
 
 impl
-GameReadyRequest
+GameReadyUnreadyRequest
 {
 	pub fn
 	get_player_id

@@ -12,4 +12,4 @@ pub mod GameCreationRequest;
 pub mod GameJoinLeaveRequest;
 
 #[allow(non_snake_case)]
-pub mod GameReadyRequest;
+pub mod GameReadyUnreadyRequest;

@@ -10,7 +10,7 @@ use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
 use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
 use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
 use crate::messages::incoming::GameJoinLeaveRequest::GameJoinLeaveRequest;
-use crate::messages::incoming::GameReadyRequest::GameReadyRequest;
+use crate::messages::incoming::GameReadyUnreadyRequest::GameReadyUnreadyRequest;
 
 use crate::server::Server::SudokuServer;
 
@@ -235,7 +235,7 @@ WebsocketSession
 						.wait(context);
 					
 				}
-				else if let Ok(request) = serde_json::from_str::<GameReadyRequest>(text)
+				else if let Ok(request) = serde_json::from_str::<GameReadyUnreadyRequest>(text)
 				{
 					self.server
 						.as_ref()
