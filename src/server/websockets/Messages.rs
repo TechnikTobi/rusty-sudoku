@@ -22,4 +22,8 @@ pub struct InternalGameListUpdateMessage(pub GamesListResponse);
 
 #[derive(Clone, Message, Debug)]
 #[rtype(result = "()")]
+pub struct InternalGameJoinLeaveMessage(pub NetworkGameIdentifier, pub NetworkPlayerIdentifier);
+
+#[derive(Clone, Message, Debug)]
+#[rtype(result = "()")]
 pub struct InternalGameUpdateMessage(pub GameStateResponse, pub Vec<NetworkPlayerIdentifier>);

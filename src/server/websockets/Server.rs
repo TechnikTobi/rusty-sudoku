@@ -3,6 +3,7 @@ use actix_broker::BrokerSubscribe;
 
 use std::collections::HashMap;
 
+use crate::messages::outgoing::GameJoinLeaveResponse::GameJoinLeaveResponse;
 use crate::messages::outgoing::PlayerRegistrationResponse::PlayerRegistrationResponse;
 use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
 
@@ -98,7 +99,9 @@ WebSocketServer
 {
 	type Result = MessageResult<InternalPlayerRegistrationMessage>;
 
-	fn handle(
+	fn 
+	handle
+	(
 		&mut self, 
 		msg: InternalPlayerRegistrationMessage, 
 		_ctx: &mut Self::Context
@@ -145,7 +148,9 @@ WebSocketServer
 {
 	type Result = MessageResult<InternalGameListUpdateMessage>;
 
-	fn handle(
+	fn 
+	handle
+	(
 		&mut self, 
 		msg: InternalGameListUpdateMessage, 
 		_ctx: &mut Self::Context
@@ -167,13 +172,42 @@ WebSocketServer
 }
 
 impl
+Handler<InternalGameJoinLeaveMessage>
+for
+WebSocketServer
+{
+	type Result = MessageResult<InternalGameJoinLeaveMessage>;
+
+	fn
+	handle
+	(
+		&mut self,
+		msg: InternalGameJoinLeaveMessage,
+		_ctx: &mut Self::Context
+	)
+	-> Self::Result
+	{
+		let InternalGameJoinLeaveMessage(game_id, recipient) = msg;
+
+		self.send_game_message(
+			JsonMessage(serde_json::to_string(&GameJoinLeaveResponse::new(game_id)).unwrap(), None),
+			vec![recipient]
+		);
+
+		MessageResult(())
+	}
+}
+
+impl
 Handler<InternalGameUpdateMessage>
 for
 WebSocketServer
 {
 	type Result = MessageResult<InternalGameUpdateMessage>;
 
-	fn handle(
+	fn
+	handle
+	(
 		&mut self, 
 		msg: InternalGameUpdateMessage, 
 		_ctx: &mut Self::Context

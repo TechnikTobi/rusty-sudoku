@@ -8,8 +8,9 @@ use std::sync::Mutex;
 use crate::board::field::Field;
 use crate::game::GameID::GameID;
 use crate::game::player::PlayerID::PlayerID;
-use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
 
+use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
+use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
 use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
 use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
 use crate::messages::incoming::GameJoinLeaveRequest::GameJoinLeaveRequest;
@@ -92,6 +93,26 @@ WebsocketSession
 			.into_actor(self)
 			.then(|_, _, _| { fut::ready(()) })
 			.wait(context);
+	}
+
+	fn
+	issue_internal_game_join_leave_message
+	(
+		&mut self,
+		context: &mut <WebsocketSession as Actor>::Context,
+		game_id: &NetworkGameIdentifier,
+		player_id: &NetworkPlayerIdentifier,
+	)
+	{
+		let message = InternalGameJoinLeaveMessage(
+			game_id.to_owned(), 
+			player_id.to_owned()
+		);
+
+		WebSocketServer::from_registry().send(message)
+			.into_actor(self)
+			.then(|_, _, _| { fut::ready(()) })
+			.wait(context);	
 	}
 
 	fn
@@ -254,6 +275,7 @@ WebsocketSession
 						.toggle_player(PlayerID::from_network(request.get_player_id()));
 
 					self.issue_internal_list_update_message(context);
+					self.issue_internal_game_join_leave_message(context, &new_game_id.to_network(), &request.get_player_id());
 					self.issue_internal_game_update_message(context, &new_game_id.to_network());
 				}
 				else if let Ok(request) = serde_json::from_str::<GameJoinLeaveRequest>(text)
@@ -261,7 +283,7 @@ WebsocketSession
 					// TODO:
 					// - De-Join Client from any other game
 
-					// Add the client to the game
+					// Add or remove the client to the game
 					self.server
 						.as_ref()
 						.unwrap()
@@ -273,6 +295,7 @@ WebsocketSession
 						.toggle_player(PlayerID::from_network(request.get_player_id()));
 
 					self.issue_internal_list_update_message(context);
+					self.issue_internal_game_join_leave_message(context, &request.get_game_id(), &request.get_player_id());
 					self.issue_internal_game_update_message(context, request.get_game_id());
 				}
 				else if let Ok(request) = serde_json::from_str::<GameReadyUnreadyRequest>(text)
