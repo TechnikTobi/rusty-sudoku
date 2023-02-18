@@ -96,4 +96,19 @@ impl Field
 			self.color.get_hex_string()
 		)
 	}
+
+	pub fn
+	from_network
+	(
+		field: &NetworkField
+	)
+	-> Self
+	{
+		Field 
+		{ 
+			position: Position::new(field.get_x(), field.get_y()), 
+			value: field.get_value(), 
+			color: Color::get_default_color()
+		}
+	}
 }
