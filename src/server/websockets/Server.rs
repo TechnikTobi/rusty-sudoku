@@ -1,6 +1,5 @@
-use actix::{prelude::*};
-use actix_broker::{BrokerSubscribe};
-use actix_web::web::Json;
+use actix::prelude::*;
+use actix_broker::BrokerSubscribe;
 
 use std::collections::HashMap;
 
@@ -14,8 +13,6 @@ use super::Messages::*;
 pub struct
 WebSocketServer
 {
-	// clients: HashMap<NetworkPlayerIdentifier, Recipient<WebsocketGamesList>>,
-	// games_clients: HashMap<NetworkGameIdentifier, Vec<Recipient<GameUpdateMessage>>>,
 	clients: HashMap<NetworkPlayerIdentifier, Recipient<JsonMessage>>,
 }
 
