@@ -87,6 +87,36 @@ function handle_websocket_message
 
 		handled = true;
 	}
+
+	if ("JoinLeaveGameID" in parsed_data)
+	{
+		// Depending on the current value, either set or reset the GameID variable
+		if (gameID == null)
+		{
+			gameID = parsed_data["JoinLeaveGameID"];
+			document.getElementById("games").style.display = "none";
+			document.getElementById("game").style.display = "block";
+			document.getElementById("ready").style.display = "block";
+
+			// Hide the board again because we don't want to show it yet
+			document.getElementById("board").style.display = "none";
+			document.getElementById("numbers").style.display = "none";
+		}
+		else
+		{
+			gameID = null;
+			document.getElementById("games").style.display = "block";
+
+			// Hide all the other stuff
+			document.getElementById("game").style.display = "none";
+			document.getElementById("ready").style.display = "none";
+			
+			document.getElementById("board").style.display = "none";
+			document.getElementById("numbers").style.display = "none";
+		}
+
+		handled = true;
+	}
 	
 	if ("State" in parsed_data)
 	{
@@ -158,43 +188,11 @@ function newRefreshGames(games)
 
 function toggleGame(id) 
 {
-
-	// Depending on the current value, either set or reset the GameID variable
-	if (gameID == null)
-	{
-		// Packing the raw value into a dictionary
-		id = {"value": id};
-
-		gameID = id;
-		document.getElementById("games").style.display = "none";
-		document.getElementById("game").style.display = "block";
-		document.getElementById("ready").style.display = "block";
-
-		// Hide the board again because we don't want to show it yet
-		document.getElementById("board").style.display = "none";
-		document.getElementById("numbers").style.display = "none";
-	}
-	else
-	{
-		// As the leave button does not have a GameID stored we need to read its
-		// value from the variable
-		id = gameID;
-
-		gameID = null;
-		document.getElementById("games").style.display = "block";
-
-		// Hide all the other stuff
-		document.getElementById("game").style.display = "none";
-		document.getElementById("board").style.display = "none";
-		document.getElementById("ready").style.display = "none";
-		document.getElementById("numbers").style.display = "none";
-	}
-
 	// Construct the JSON message
 	JSONdata = JSON.stringify(
 		{
 			"PlayerID" : playerID,
-			"GameID" : id
+			"GameID" : {"value": id == -1 ? gameID["value"] : id}
 		}
 	);
 
@@ -219,6 +217,7 @@ function showGame(game)
 		{
 			document.getElementById("game").style.display = "block";
 			document.getElementById("board").style.display = "block";
+			document.getElementById("numbers").style.display = "block";
 			document.getElementById("ready").style.display = "none";
 		}
 
