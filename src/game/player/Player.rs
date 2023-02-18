@@ -1,6 +1,6 @@
 use crate::{game::player::PlayerID::PlayerID, color::Color::Color, messages::base::PlayerListElement::PlayerListElement};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct
 Player
 {
