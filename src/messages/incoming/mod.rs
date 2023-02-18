@@ -13,3 +13,6 @@ pub mod GameJoinLeaveRequest;
 
 #[allow(non_snake_case)]
 pub mod GameReadyUnreadyRequest;
+
+#[allow(non_snake_case)]
+pub mod GameSetFieldRequest;

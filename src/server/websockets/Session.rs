@@ -1,16 +1,20 @@
-use actix::{fut, prelude::*};
+use actix::fut;
+use actix::prelude::*;
 use actix_web::web;
 use actix_web_actors::ws;
 
 use std::sync::Mutex;
 
+use crate::board::field::Field;
 use crate::game::GameID::GameID;
 use crate::game::player::PlayerID::PlayerID;
 use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
+
 use crate::messages::incoming::PlayerRegistrationRequest::PlayerRegistrationRequest;
 use crate::messages::incoming::GameCreationRequest::GameCreationRequest;
 use crate::messages::incoming::GameJoinLeaveRequest::GameJoinLeaveRequest;
 use crate::messages::incoming::GameReadyUnreadyRequest::GameReadyUnreadyRequest;
+use crate::messages::incoming::GameSetFieldRequest::GameSetFieldRequest;
 
 use crate::server::Server::SudokuServer;
 
@@ -171,6 +175,39 @@ WebsocketSession
 						.then(|_, _, _| { fut::ready(()) })
 						.wait(context);
 				}
+				else if let Ok(request) = serde_json::from_str::<GameSetFieldRequest>(text)
+				{
+					// First, get the player
+					let player = self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap()
+						.get_player_manager()
+						.get_player(&PlayerID::from_network(request.get_player_id()))
+						.unwrap()
+						.clone();
+
+					// Then use the player & the field to try to set its value
+					self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap()
+						.get_mut_game_controller_manager()
+						.get_mut_game(&GameID::from_network(request.get_game_id()))
+						.unwrap()
+						.set_field(
+							Field::from_network(request.get_field()),
+							&player
+						);
+
+					// Finally, notify all participating players that something changed
+					self.issue_internal_game_update_message(
+						context, 
+						request.get_game_id()
+					)
+				}
 				else if let Ok(request) = serde_json::from_str::<GameCreationRequest>(text)
 				{
 					// Create a new game in the SudokuServer
@@ -233,7 +270,6 @@ WebsocketSession
 						.into_actor(self)
 						.then(|_, _, _| { fut::ready(()) })
 						.wait(context);
-					
 				}
 				else if let Ok(request) = serde_json::from_str::<GameReadyUnreadyRequest>(text)
 				{
@@ -260,7 +296,7 @@ WebsocketSession
 			}
 			ws::Message::Close(reason) => {
 
-
+				// TODO: Cleanup!
 
 				context.close(reason);
 				context.stop();
@@ -268,6 +304,4 @@ WebsocketSession
 			_ => {}
 		}
 	}
-
-	
 }
