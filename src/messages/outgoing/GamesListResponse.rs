@@ -1,3 +1,4 @@
+use actix::fut::ready;
 use serde::Serialize;
 
 use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
@@ -12,6 +13,7 @@ GamesListElement
 	GameName: String,
 	CreatorName: String,
 	Difficulty: u8,
+	ReadyPlayers: u8,
 	TotalPlayers: u8,
 }
 
@@ -33,6 +35,7 @@ GamesListElement
 		game_name: String,
 		creator_name: String,
 		difficulty: u8,
+		ready_players: u8,
 		total_players: u8,
 	)
 	-> Self
@@ -43,6 +46,7 @@ GamesListElement
 			GameName: game_name, 
 			CreatorName: creator_name, 
 			Difficulty: difficulty, 
+			ReadyPlayers: ready_players,
 			TotalPlayers: total_players,
 		}
 	}

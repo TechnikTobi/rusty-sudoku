@@ -7,29 +7,29 @@ use super::IRequest::IRequest;
 
 #[derive(Deserialize, Debug)]
 pub struct
-GameStartRequest
+GameReadyRequest
 {
-	MasterID: NetworkPlayerIdentifier,
-	GameID: NetworkGameIdentifier
+	ReadyPlayerID: NetworkPlayerIdentifier,
+	GameID: NetworkGameIdentifier,
 }
 
 impl
 IRequest
 for
-GameStartRequest
+GameReadyRequest
 {}
 
 impl
-GameStartRequest
+GameReadyRequest
 {
 	pub fn
-	get_master_id
+	get_player_id
 	(
 		&self
 	)
 	-> &NetworkPlayerIdentifier
 	{
-		&self.MasterID
+		&self.ReadyPlayerID
 	}
 
 	pub fn

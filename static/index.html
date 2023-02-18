@@ -54,9 +54,11 @@
 					</tbody>
 				</table>
 			</div>
+			
 			<div id="ready">
-				<p>Waiting for Game Master to start the Game! <button id="leaveButton" onClick="toggleGame(-1)" type="submit">Leave</button></p>
+				<p>Waiting for all players to be ready <button id="readyButton" onClick="readyGame(-1)" type="submit">Ready</button> <button id="leaveButton" onClick="toggleGame(-1)" type="submit">Leave</button></p>
 			</div>
+			
 			<div id="board">
 				<div class="row">
 					<div id="x0y0" onclick="fieldClick(this.id)" class="field">1</div>

@@ -43,12 +43,15 @@ GameController
 		}
 	}
 
-	pub fn get_master_id (&self) -> &PlayerID               { &self.master_id }
-	pub fn get_game      (&self) -> &Game                   { &self.game }
-	pub fn get_points    (&self) -> &HashMap<PlayerID, i64> { &self.points }
+	pub fn get_master_id       (&self) -> &PlayerID               { &self.master_id }
+	pub fn get_game            (&self) -> &Game                   { &self.game }
+	pub fn get_points          (&self) -> &HashMap<PlayerID, i64> { &self.points }
 	
-	pub fn is_joinable   (&self) -> bool { self.game.get_state() == &EGameState::READY }
-	pub fn is_finished   (&self) -> bool { self.game.get_state() == &EGameState::FINISHED }
+	pub fn is_joinable         (&self) -> bool  { self.game.get_state() == &EGameState::READY }
+	pub fn is_finished         (&self) -> bool  { self.game.get_state() == &EGameState::FINISHED }
+
+	pub fn count_total_players (&self) -> usize { self.points.len() }
+	pub fn count_ready_players (&self) -> usize { self.points.iter().filter(|(_, points)| *points == &Self::POINTS_READY).count() }
 
 	pub fn get_mut_game  (&mut self) -> &mut Game { &mut self.game }
 
@@ -75,12 +78,23 @@ GameController
 	}
 
 	pub fn
-	start
+	ready_player
 	(
-		&mut self
+		&mut self,
+		player_id: PlayerID
 	)
 	{
-		self.game.set_state(EGameState::ONGOING);
+		if !self.points.contains_key(&player_id)
+		{
+			return;
+		}
+
+		self.points.insert(player_id, Self::POINTS_READY);
+
+		if self.count_ready_players() == self.count_total_players()
+		{
+			self.game.set_state(EGameState::ONGOING);
+		}
 	}
 
 	pub fn
@@ -126,16 +140,6 @@ GameController
 			.iter()
 			.map(|(id, _)| id.to_network())
 			.collect::<Vec<NetworkPlayerIdentifier>>()
-	}
-
-	pub fn
-	count_players
-	(
-		&self
-	)
-	-> usize
-	{
-		self.points.len()
 	}
 
 }
