@@ -270,18 +270,14 @@ function toggleReadyGame()
 
 	websocket_client.send(JSONdata);
 
-	if (document.getElementById("readyButton").innerHTML == "Ready")
+	if (document.getElementById("readyButton").innerHTML == "Ready")            // Sent to server that we are READY
 	{
-		// Sent to server that we are READY
-
 		// Change button text to "Unready" and hide leave button
 		document.getElementById("readyButton").innerHTML = "Unready";
 		document.getElementById("leaveButton").style = "none";
 	}
-	else
+	else                                                                        // Sent to the server that we are NOT READY
 	{
-		// Sent to the server that we are NOT READY
-
 		// Change button text to "Ready" and show leave button
 		document.getElementById("readyButton").innerHTML = "Ready";
 		document.getElementById("leaveButton").style = "block";
