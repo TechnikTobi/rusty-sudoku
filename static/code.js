@@ -367,10 +367,13 @@ function getFieldID()
 	return "x" + selected_x + "y" + selected_y;
 }
 
-document.onkeydown = function(evt) {
+document.onkeydown = function(evt) 
+{
 	evt = evt || window.event;
-	if(parseInt(evt.key) > 0 && parseInt(evt.key) < 10) {
-		if(selected_x != -1 && selected_y != -1) {
+	if(parseInt(evt.key) > 0 && parseInt(evt.key) < 10) 
+	{
+		if(selected_x != -1 && selected_y != -1) 
+		{
 			selected_value = parseInt(evt.key);
 			document.getElementById(getFieldID()).style.boxShadow = "none";
 			sendMoveToServer();
@@ -379,17 +382,21 @@ document.onkeydown = function(evt) {
 	}
 };
 
-function sendMoveToServer() {
-	if(gameClient != null) {
-		gameClient.send("/app/game/" + gameID + "/move", {}, JSON.stringify({
+function sendMoveToServer() 
+{
+	JSONdata = JSON.stringify(
+		{
 			"PlayerID" : playerID,
 			"GameID" : gameID,
-			"Field" : {
-				"X" : selected_x,
-				"Y" : selected_y,
-				"Value" : selected_value,
-				"Color" : ""
-			}
-		}));
-	}
+			"Field" : 
+				{
+					"X" : selected_x,
+					"Y" : selected_y,
+					"Value" : selected_value,
+					"Color" : ""
+				}
+		}
+	);
+
+	websocket_client.send(JSONdata);
 }
