@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::hash::Hash;
 
+use crate::board::position::Position;
+use crate::color::Color::Color;
 use crate::game::Game::Game;
 use crate::game::player::PlayerID::PlayerID;
 use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
@@ -8,6 +10,8 @@ use crate::messages::outgoing::GameStateResponse::GameStateResponse;
 
 use super::BoardManager::BoardManager;
 use super::EGameState::*;
+use super::EPlacementState::*;
+use super::player::Player::Player;
 use super::player::PlayerManager::PlayerManager;
 
 pub struct
@@ -140,6 +144,36 @@ GameController
 			.iter()
 			.map(|(id, _)| id.to_network())
 			.collect::<Vec<NetworkPlayerIdentifier>>()
+	}
+
+	pub fn
+	set_field
+	(
+		&mut self,
+		position: Position,
+		value: u8,
+		player: Player
+	)
+	{
+		if 
+			self.game.get_state() != &EGameState::ONGOING ||
+			!self.points.contains_key(player.get_player_id())
+		{
+			return;
+		}
+
+		let new_points = match self.board_manager.set_field(
+			position, 
+			value, 
+			player.get_color().to_owned()
+		)
+		{
+			EPlacementState::CORRECT => 100,
+			EPlacementState::INCORRECT => -100,
+			EPlacementState::INVALID => 0
+		} + self.points.get(player.get_player_id()).unwrap();
+
+		self.points.insert(player.get_player_id().to_owned(), new_points);
 	}
 
 }
