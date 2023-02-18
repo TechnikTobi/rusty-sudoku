@@ -214,8 +214,13 @@ function showGame(game)
 
 	if ("Fields" in game)
 	{
-		// Show the board
-		document.getElementById("game").style.display = "block";
+		// Show the board (if we have the data)
+		if (game["Fields"].length > 0)
+		{
+			document.getElementById("game").style.display = "block";
+			document.getElementById("board").style.display = "block";
+			document.getElementById("ready").style.display = "none";
+		}
 
 		// Fill the board
 		for (let index in game["Fields"])
