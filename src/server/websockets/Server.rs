@@ -86,7 +86,8 @@ WebSocketServer
 	) 
 	{
 		self.subscribe_system_async::<InternalPlayerRegistrationMessage>(context);
-		self.subscribe_system_async::<InternalGameCreationMessage>(context);
+		self.subscribe_system_async::<InternalGameListUpdateMessage>(context);
+		self.subscribe_system_async::<InternalGameUpdateMessage>(context);
 	}
 }
 
@@ -138,21 +139,21 @@ WebSocketServer
 }
 
 impl 
-Handler<InternalGameCreationMessage> 
+Handler<InternalGameListUpdateMessage> 
 for 
 WebSocketServer 
 {
-	type Result = MessageResult<InternalGameCreationMessage>;
+	type Result = MessageResult<InternalGameListUpdateMessage>;
 
 	fn handle(
 		&mut self, 
-		msg: InternalGameCreationMessage, 
+		msg: InternalGameListUpdateMessage, 
 		_ctx: &mut Self::Context
 	) 
 	-> Self::Result 
 	{
 		// Deconstruct the internal message
-		let InternalGameCreationMessage(games_list) = msg;
+		let InternalGameListUpdateMessage(games_list) = msg;
 
 		// Send to EVERYONE
 		self.send_to_all(JsonMessage(

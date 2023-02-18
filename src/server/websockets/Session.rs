@@ -79,7 +79,7 @@ WebsocketSession
 		context: &mut <WebsocketSession as Actor>::Context,
 	)
 	{
-		let message = InternalGameCreationMessage(
+		let message = InternalGameListUpdateMessage(
 			self.server
 				.as_ref()
 				.unwrap()
@@ -230,7 +230,7 @@ WebsocketSession
 				else if let Ok(request) = serde_json::from_str::<GameCreationRequest>(text)
 				{
 					// Create a new game in the SudokuServer
-					let _new_game_id = self.server
+					let new_game_id = self.server
 						.as_ref()
 						.unwrap()
 						.lock()
@@ -242,7 +242,19 @@ WebsocketSession
 							request.get_difficulty().clone()
 					);
 
+					// Automatically join the Master
+					self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap()
+						.get_mut_game_controller_manager()
+						.get_mut_game(&new_game_id)
+						.unwrap()
+						.toggle_player(PlayerID::from_network(request.get_player_id()));
+
 					self.issue_internal_list_update_message(context);
+					self.issue_internal_game_update_message(context, &new_game_id.to_network());
 				}
 				else if let Ok(request) = serde_json::from_str::<GameJoinLeaveRequest>(text)
 				{
