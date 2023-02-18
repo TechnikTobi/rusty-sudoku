@@ -73,6 +73,28 @@ WebsocketSession
 	}
 
 	fn
+	issue_internal_list_update_message
+	(
+		&mut self,
+		context: &mut <WebsocketSession as Actor>::Context,
+	)
+	{
+		let message = InternalGameCreationMessage(
+			self.server
+				.as_ref()
+				.unwrap()
+				.lock()
+				.unwrap()
+				.generate_games_list_response()
+		);
+
+		WebSocketServer::from_registry().send(message)
+			.into_actor(self)
+			.then(|_, _, _| { fut::ready(()) })
+			.wait(context);
+	}
+
+	fn
 	issue_internal_game_update_message
 	(
 		&mut self,
@@ -203,10 +225,7 @@ WebsocketSession
 						);
 
 					// Finally, notify all participating players that something changed
-					self.issue_internal_game_update_message(
-						context, 
-						request.get_game_id()
-					)
+					self.issue_internal_game_update_message(context, request.get_game_id());
 				}
 				else if let Ok(request) = serde_json::from_str::<GameCreationRequest>(text)
 				{
@@ -223,14 +242,7 @@ WebsocketSession
 							request.get_difficulty().clone()
 					);
 
-					// Send the internal registration to the Websocket Server
-					let games_list_message = InternalGameCreationMessage(
-						self.server.as_ref().unwrap().lock().unwrap().generate_games_list_response()
-					);
-					WebSocketServer::from_registry().send(games_list_message)
-						.into_actor(self)
-						.then(|_, _, _| { fut::ready(()) })
-						.wait(context);
+					self.issue_internal_list_update_message(context);
 				}
 				else if let Ok(request) = serde_json::from_str::<GameJoinLeaveRequest>(text)
 				{
@@ -248,28 +260,8 @@ WebsocketSession
 						.unwrap()
 						.toggle_player(PlayerID::from_network(request.get_player_id()));
 
-					let immut_server = self.server
-						.as_ref()
-						.unwrap()
-						.lock()
-						.unwrap();
-
-					// Send an internal message that something regarding the players has changed
-					let games_list = immut_server.generate_games_list_response();
-
-					let (game_state, player_list) = immut_server
-						.get_game_controller_manager()
-						.get_game(&GameID::from_network(request.get_game_id()))
-						.unwrap()
-						.to_network(immut_server.get_player_manager(), "".to_string());
-					
-
-					let message = InternalGameJoinLeaveMessage(games_list, game_state, player_list);
-
-					WebSocketServer::from_registry().send(message)
-						.into_actor(self)
-						.then(|_, _, _| { fut::ready(()) })
-						.wait(context);
+					self.issue_internal_list_update_message(context);
+					self.issue_internal_game_update_message(context, request.get_game_id());
 				}
 				else if let Ok(request) = serde_json::from_str::<GameReadyUnreadyRequest>(text)
 				{
@@ -283,10 +275,7 @@ WebsocketSession
 						.unwrap()
 						.ready_player(PlayerID::from_network(request.get_player_id()));
 
-					self.issue_internal_game_update_message(
-						context, 
-						request.get_game_id()
-					);
+					self.issue_internal_game_update_message(context, request.get_game_id());
 				}
 				else
 				{

@@ -166,40 +166,6 @@ WebSocketServer
 }
 
 impl
-Handler<InternalGameJoinLeaveMessage>
-for
-WebSocketServer
-{
-	type Result = MessageResult<InternalGameJoinLeaveMessage>;
-
-	fn handle(
-		&mut self, 
-		msg: InternalGameJoinLeaveMessage, 
-		_ctx: &mut Self::Context
-	) 
-	-> Self::Result 
-	{
-		// Deconstruct the internal message
-		let InternalGameJoinLeaveMessage(games_list, game_state, player_list) = msg;
-
-		// 1. Send to EVERYONE the new list of games (due to change of numbers in table)
-		self.send_to_all(JsonMessage(
-			serde_json::to_string(&games_list).unwrap(), 
-			None
-		));
-
-		// 2. Send updated game state to relevant clients
-		self.send_game_message(
-			JsonMessage(serde_json::to_string(&game_state).unwrap(), None),
-			player_list
-		);
-
-		// See above
-		MessageResult(())
-	}
-}
-
-impl
 Handler<InternalGameUpdateMessage>
 for
 WebSocketServer
