@@ -70,7 +70,7 @@ function handle_websocket_message
 	let parsed_data = JSON.parse(data);
 
 	if (playerID == null && "PlayerID" in parsed_data)                          // Got a response to player registration request
-	{		
+	{
 		playerID = parsed_data["PlayerID"];
 
 		if (playerID == null)
@@ -83,7 +83,7 @@ function handle_websocket_message
 	
 	if ("Games" in parsed_data)                                                 // Update regarding list of games
 	{
-		newRefreshGames(parsed_data)
+		showListOfGames(parsed_data);
 
 		handled = true;
 	}
@@ -121,7 +121,7 @@ function handle_websocket_message
 	if ("State" in parsed_data)
 	{
 		// Update the state of the current game
-		showGame(parsed_data)
+		showGame(parsed_data);
 
 		handled = true;
 	}
@@ -163,29 +163,6 @@ function createGame()
 	websocket_client.send(JSONdata);	
 }
 
-function newRefreshGames(games) 
-{
-	// Clear the existing table
-	document.getElementById("gamesTableBody").innerHTML = "";
-
-	// Insert the data into the table
-	for (let index in games["Games"])
-	{
-		// Get the information about a specific game
-		let game = games["Games"][index];
-
-		// Insert a new row into the table
-		var row = document.getElementById("gamesTableBody").insertRow(-1);
-
-		// Fill the newly created row
-		row.insertCell(0).innerHTML = game["CreatorName"];
-		row.insertCell(1).innerHTML = game["GameName"];
-		row.insertCell(2).innerHTML = game["Difficulty"];
-		row.insertCell(3).innerHTML = row.insertCell(3).innerHTML = (game["ReadyPlayers"]).toString() + "/" + (game["TotalPlayers"]).toString();
-		row.insertCell(4).innerHTML = "<button onClick='toggleGame(" + game["GameID"]["value"] + ")'>Join</button>";
-	}
-}
-
 function toggleGame(id) 
 {
 	// Construct the JSON message
@@ -198,65 +175,6 @@ function toggleGame(id)
 
 	// Send the message
 	websocket_client.send(JSONdata);
-}
-
-function showGame(game)
-{
-
-	console.log(game);
-
-	if ("Message" in game)
-	{
-		document.getElementById("message").innerHTML = game["Message"];
-	}
-
-	if ("Fields" in game)
-	{
-		// Show the board (if we have the data)
-		if (game["Fields"].length > 0)
-		{
-			document.getElementById("game").style.display = "block";
-			document.getElementById("board").style.display = "block";
-			document.getElementById("numbers").style.display = "block";
-			document.getElementById("ready").style.display = "none";
-		}
-
-		// Fill the board
-		for (let index in game["Fields"])
-		{
-			let field = game["Fields"][index];
-
-			let value = parseInt(field["Value"]);
-			document.getElementById(
-				"x" + field["X"] 
-				+ "y" + field["Y"]
-			).innerHTML = (value == 0 ? "&nbsp;" : value);
-
-			document.getElementById(
-				"x" + field["X"] 
-				+ "y" + field["Y"]
-			).style.backgroundColor = "#" + field["Color"];
-		}
-	}
-
-	if ("Players" in game)
-	{
-		// Show the list of players
-		document.getElementById("playersTableBody").innerHTML = "";
-
-		for (let index in game["Players"]) 
-		{
-			let player = game["Players"][index];
-
-			var row = document.getElementById("playersTableBody").insertRow(-1);
-			var playerNameCell = row.insertCell(0);
-			
-			playerNameCell.innerHTML = player["PlayerName"];
-			playerNameCell.style.color = "#" + player["Color"];
-
-			row.insertCell(1).innerHTML = player["Points"];
-		}
-	}
 }
 
 function toggleReadyGame() 
@@ -394,4 +312,87 @@ function sendMoveToServer()
 	);
 
 	websocket_client.send(JSONdata);
+}
+
+
+function showListOfGames(games) 
+{
+	// Clear the existing table
+	document.getElementById("gamesTableBody").innerHTML = "";
+
+	// Insert the data into the table
+	for (let index in games["Games"])
+	{
+		// Get the information about a specific game
+		let game = games["Games"][index];
+
+		// Insert a new row into the table
+		var row = document.getElementById("gamesTableBody").insertRow(-1);
+
+		// Fill the newly created row
+		row.insertCell(0).innerHTML = game["CreatorName"];
+		row.insertCell(1).innerHTML = game["GameName"];
+		row.insertCell(2).innerHTML = game["Difficulty"];
+		row.insertCell(3).innerHTML = row.insertCell(3).innerHTML = (game["ReadyPlayers"]).toString() + "/" + (game["TotalPlayers"]).toString();
+		row.insertCell(4).innerHTML = "<button onClick='toggleGame(" + game["GameID"]["value"] + ")'>Join</button>";
+	}
+}
+
+function showGame(game)
+{
+
+	console.log(game);
+
+	if ("Message" in game)
+	{
+		document.getElementById("message").innerHTML = game["Message"];
+	}
+
+	if ("Fields" in game)
+	{
+		// Show the board (if we have the data)
+		if (game["Fields"].length > 0)
+		{
+			document.getElementById("game").style.display = "block";
+			document.getElementById("board").style.display = "block";
+			document.getElementById("numbers").style.display = "block";
+			document.getElementById("ready").style.display = "none";
+		}
+
+		// Fill the board
+		for (let index in game["Fields"])
+		{
+			let field = game["Fields"][index];
+
+			let value = parseInt(field["Value"]);
+			document.getElementById(
+				"x" + field["X"] 
+				+ "y" + field["Y"]
+			).innerHTML = (value == 0 ? "&nbsp;" : value);
+
+			document.getElementById(
+				"x" + field["X"] 
+				+ "y" + field["Y"]
+			).style.backgroundColor = "#" + field["Color"];
+		}
+	}
+
+	if ("Players" in game)
+	{
+		// Show the list of players
+		document.getElementById("playersTableBody").innerHTML = "";
+
+		for (let index in game["Players"]) 
+		{
+			let player = game["Players"][index];
+
+			var row = document.getElementById("playersTableBody").insertRow(-1);
+			var playerNameCell = row.insertCell(0);
+			
+			playerNameCell.innerHTML = player["PlayerName"];
+			playerNameCell.style.color = "#" + player["Color"];
+
+			row.insertCell(1).innerHTML = player["Points"];
+		}
+	}
 }
