@@ -1,5 +1,5 @@
 use rand::Rng;
-
+use super::HSV::hsv_to_rgb;
 
 #[derive(Copy, Clone, Debug)]
 pub struct
@@ -37,11 +37,13 @@ impl Color
 	new_random_color()
 	-> Self
 	{
-		let hue = rand::random::<f64>();
-		let saturation = 0.6;
-		let value = 0.8;
+		let hue: f64 = rand::random::<f64>() * 360.0;
+		let saturation: f64 = 0.6;
+		let value: f64 = 0.8;
 
-		Color { red: 0, green: 0, blue: 0 }	
+		let (red, green, blue) = hsv_to_rgb(hue, saturation, value);
+
+		Color { red: red, green: green, blue: blue }	
 	}
 
 	/// Gets the color as a string containing the hex values of the red, green
