@@ -13,7 +13,7 @@ hsv_to_rgb
 
 	let z = (M - m) * (1.0 - (float_mod_2(h / 60.0) - 1.0).abs());
 
-	if (0.0 <= h && h < 60.0)
+	if 0.0 <= h && h < 60.0
 	{
 		return (
 			M as u8, 
@@ -21,7 +21,7 @@ hsv_to_rgb
 			m as u8
 		);
 	}
-	else if (60.0 <= h && h < 120.0)
+	else if 60.0 <= h && h < 120.0
 	{
 		return (
 			(z+m) as u8, 
@@ -29,7 +29,7 @@ hsv_to_rgb
 			m as u8
 		);
 	}
-	else if (120.0 <= h && h < 180.0)
+	else if 120.0 <= h && h < 180.0
 	{
 		return (
 			m as u8, 
@@ -37,7 +37,7 @@ hsv_to_rgb
 			(z+m) as u8
 		);
 	}
-	else if (180.0 <= h && h < 240.0)
+	else if 180.0 <= h && h < 240.0
 	{
 		return (
 			m as u8, 
@@ -45,7 +45,7 @@ hsv_to_rgb
 			M as u8
 		);
 	}
-	else if (240.0 <= h && h < 300.0)
+	else if 240.0 <= h && h < 300.0
 	{
 		return (
 			(z+m) as u8, 
@@ -53,7 +53,7 @@ hsv_to_rgb
 			M as u8
 		);
 	}
-	else if (300.0 <= h && h < 360.0)
+	else if 300.0 <= h && h < 360.0
 	{
 		return (
 			M as u8, 
@@ -76,12 +76,12 @@ float_mod_2
 )
 -> f64
 {
-	while (value < 0.0)
+	while value < 0.0
 	{
 		value += 2.0;
 	}
 
-	while (value >= 2.0)
+	while value >= 2.0
 	{
 		value -= 2.0;
 	}
