@@ -8,7 +8,6 @@ use crate::messages::outgoing::GameStateResponse::GameStateResponse;
 
 use super::BoardManager::BoardManager;
 use super::EGameState::*;
-use super::EPlacementState::*;
 use super::player::Player::Player;
 use super::player::PlayerManager::PlayerManager;
 
@@ -47,15 +46,12 @@ GameController
 
 	pub fn get_master_id       (&self) -> &PlayerID               { &self.master_id }
 	pub fn get_game            (&self) -> &Game                   { &self.game }
-	pub fn get_points          (&self) -> &HashMap<PlayerID, i64> { &self.points }
 	
 	pub fn is_joinable         (&self) -> bool  { self.game.get_state() == &EGameState::READY }
 	pub fn is_finished         (&self) -> bool  { self.game.get_state() == &EGameState::FINISHED }
 
 	pub fn count_total_players (&self) -> usize { self.points.len() }
 	pub fn count_ready_players (&self) -> usize { self.points.iter().filter(|(_, points)| *points == &Self::POINTS_READY).count() }
-
-	pub fn get_mut_game  (&mut self) -> &mut Game { &mut self.game }
 
 	pub fn
 	toggle_player
@@ -166,6 +162,11 @@ GameController
 		).points() + self.points.get(player.get_player_id()).unwrap();
 		
 		self.points.insert(player.get_player_id().to_owned(), new_points);
+
+		if self.board_manager.get_play_board().is_full()
+		{
+			self.game.set_state(EGameState::FINISHED);
+		}
 	}
 
 }
