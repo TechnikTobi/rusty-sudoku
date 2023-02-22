@@ -1,4 +1,3 @@
-use rand::Rng;
 use super::HSV::hsv_to_rgb;
 
 #[derive(Copy, Clone, Debug)]
@@ -12,19 +11,6 @@ Color
 
 impl Color
 {
-	/// Constructor for creating a new struct with given RGB values
-	pub fn
-	new
-	(
-		red: u8,
-		green: u8,
-		blue: u8
-	)
-	-> Self
-	{
-		Color { red, green, blue }
-	}
-
 	/// Creates a new struct with the default color: black
 	pub fn
 	get_default_color()
