@@ -1,3 +1,5 @@
+use std::{sync::atomic::{AtomicUsize, Ordering}};
+
 use super::HSV::hsv_to_rgb;
 
 #[derive(Copy, Clone, Debug)]
@@ -9,7 +11,11 @@ Color
 	blue: u8
 }
 
-impl Color
+#[allow(non_upper_case_globals)]
+static NextHue: AtomicUsize = AtomicUsize::new(1);
+
+impl 
+Color
 {
 	/// Creates a new struct with the default color: black
 	pub fn
@@ -23,7 +29,8 @@ impl Color
 	new_random_color()
 	-> Self
 	{
-		let hue: f64 = rand::random::<f64>() * 360.0;
+		// let hue: f64 = rand::random::<f64>() * 360.0;
+		let hue = (NextHue.fetch_add(37, Ordering::Relaxed) % 360) as f64;
 		let saturation: f64 = 0.6;
 		let value: f64 = 0.8;
 
