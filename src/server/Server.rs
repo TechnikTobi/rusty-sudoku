@@ -77,6 +77,10 @@ SudokuServer
 
 		for (id, controller) in self.game_controller_manager.get_iter()
 		{
+
+			// Only return games that are actually joinable
+			if !controller.is_joinable() { continue; }
+
 			let element = GamesListElement::new(
 				id.to_network(), 
 				controller.get_game().get_name().clone(), 
