@@ -89,6 +89,8 @@ function handle_websocket_message
 	if ("JoinLeaveGameID" in parsed_data)
 	{
 
+		// The server returns here a response where the GameID is zero, meaning
+		// that the client was not able to successfully join the game.
 		if (parsed_data["JoinLeaveGameID"]["value"] == 0)
 		{
 			return;
@@ -330,7 +332,7 @@ function showListOfGames(games)
 		row.insertCell(0).innerHTML = game["CreatorName"];
 		row.insertCell(1).innerHTML = game["GameName"];
 		row.insertCell(2).innerHTML = game["Difficulty"];
-		row.insertCell(3).innerHTML = row.insertCell(3).innerHTML = (game["ReadyPlayers"]).toString() + "/" + (game["TotalPlayers"]).toString();
+		row.insertCell(3).innerHTML = (game["TotalPlayers"]).toString();
 		row.insertCell(4).innerHTML = "<button onClick='toggleGame(" + game["GameID"]["value"] + ")'>Join</button>";
 	}
 }

@@ -82,7 +82,6 @@ SudokuServer
 				controller.get_game().get_name().clone(), 
 				self.get_player_manager().get_player(controller.get_master_id()).unwrap().get_name().clone(), 
 				controller.get_game().get_difficulty().clone(), 
-				controller.count_ready_players() as u8,
 				controller.count_total_players() as u8,
 			);
 
