@@ -118,7 +118,7 @@ function handle_websocket_message
 		handled = true;
 	}
 	
-	if ("State" in parsed_data)
+	if ("Fields" in parsed_data)
 	{
 		// Update the state of the current game
 		showGame(parsed_data);

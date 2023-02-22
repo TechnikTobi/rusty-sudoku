@@ -1,6 +1,5 @@
 use serde::Serialize;
 
-use crate::messages::base::NetworkGameState::NetworkGameState;
 use crate::messages::base::PlayerListElement::PlayerListElement;
 use crate::messages::base::NetworkField::NetworkField;
 
@@ -8,7 +7,6 @@ use crate::messages::base::NetworkField::NetworkField;
 pub struct
 GameStateResponse
 {
-	State: NetworkGameState,
 	Fields: Vec<NetworkField>,
 	Players: Vec<PlayerListElement>,
 	Message: String,
@@ -22,7 +20,6 @@ GameStateResponse
 	pub fn
 	new
 	(
-		state: NetworkGameState,
 		fields: Vec<NetworkField>,
 		players: Vec<PlayerListElement>,
 		message: String,
@@ -31,7 +28,6 @@ GameStateResponse
 	{
 		GameStateResponse
 		{
-			State: state,
 			Fields: fields,
 			Players: players,
 			Message: message,
@@ -45,17 +41,7 @@ GameStateResponse
 	)
 	-> Self
 	{
-		Self::new(NetworkGameState::UNDEFINED, Vec::new(), Vec::new(), message)
-	}
-
-	pub fn
-	set_state
-	(
-		&mut self,
-		state: NetworkGameState
-	)
-	{
-		self.State = state;
+		Self::new(Vec::new(), Vec::new(), message)
 	}
 
 	pub fn
