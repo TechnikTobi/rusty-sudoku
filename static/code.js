@@ -66,7 +66,6 @@ function handle_websocket_message
 
 	ding.play();
 
-	var handled = false;
 	let parsed_data = JSON.parse(data);
 
 	if (playerID == null && "PlayerID" in parsed_data)                          // Got a response to player registration request
@@ -78,18 +77,23 @@ function handle_websocket_message
 			websocket_client.close();
 		}
 
-		handled = true;
+		return;
 	}
 	
 	if ("Games" in parsed_data)                                                 // Update regarding list of games
 	{
 		showListOfGames(parsed_data);
-
-		handled = true;
+		return;
 	}
 
 	if ("JoinLeaveGameID" in parsed_data)
 	{
+
+		if (parsed_data["JoinLeaveGameID"]["value"] == 0)
+		{
+			return;
+		}
+
 		// Depending on the current value, either set or reset the GameID variable
 		if (gameID == null)
 		{
@@ -114,24 +118,17 @@ function handle_websocket_message
 			document.getElementById("board").style.display = "none";
 			document.getElementById("numbers").style.display = "none";
 		}
-
-		handled = true;
 	}
 	
 	if ("Fields" in parsed_data)
 	{
 		// Update the state of the current game
 		showGame(parsed_data);
-
-		handled = true;
+		return;
 	}
 	
-
-	if (!handled)
-	{
-		console.log('Received some data:');
-		console.log(data);
-	}
+	console.log('Received some data:');
+	console.log(data);
 }
 
 // Register player with name via POST request

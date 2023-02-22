@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use crate::board::field::Field;
 use crate::game::Game::Game;
+use crate::game::GameID::GameID;
 use crate::game::player::PlayerID::PlayerID;
 use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
 use crate::messages::outgoing::GameStateResponse::GameStateResponse;
@@ -59,10 +60,11 @@ GameController
 		&mut self,
 		new_player: PlayerID
 	)
+	-> GameID
 	{
 		if !self.is_joinable()
 		{
-			return;
+			return GameID::empty();
 		}
 
 		if self.points.contains_key(&new_player)
@@ -73,6 +75,8 @@ GameController
 		{
 			self.points.insert(new_player, Self::POINTS_UNREADY);
 		}
+
+		return self.get_game().get_game_id().to_owned();
 	}
 
 	pub fn

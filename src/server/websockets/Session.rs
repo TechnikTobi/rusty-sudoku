@@ -284,7 +284,7 @@ WebsocketSession
 					// - De-Join Client from any other game
 
 					// Add or remove the client to the game
-					self.server
+					let return_game_id = self.server
 						.as_ref()
 						.unwrap()
 						.lock()
@@ -295,7 +295,7 @@ WebsocketSession
 						.toggle_player(PlayerID::from_network(request.get_player_id()));
 
 					self.issue_internal_list_update_message(context);
-					self.issue_internal_game_join_leave_message(context, &request.get_game_id(), &request.get_player_id());
+					self.issue_internal_game_join_leave_message(context, &return_game_id.to_network(), &request.get_player_id());
 					self.issue_internal_game_update_message(context, request.get_game_id());
 				}
 				else if let Ok(request) = serde_json::from_str::<GameReadyUnreadyRequest>(text)

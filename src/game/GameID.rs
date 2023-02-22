@@ -17,6 +17,9 @@ impl GameID
 	pub fn new() -> Self
 	{ GameID { value: GameIDcounter.fetch_add(1, Ordering::Relaxed) } }
 
+	pub fn empty() -> Self
+	{ GameID { value: 0 } }
+
 	pub fn
 	from_network
 	(
