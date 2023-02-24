@@ -49,7 +49,6 @@ GameController
 	pub fn get_game            (&self) -> &Game                   { &self.game }
 	
 	pub fn is_joinable         (&self) -> bool  { self.game.get_state() == &EGameState::READY }
-	pub fn is_finished         (&self) -> bool  { self.game.get_state() == &EGameState::FINISHED }
 
 	pub fn count_total_players (&self) -> usize { self.points.len() }
 	pub fn count_ready_players (&self) -> usize { self.points.iter().filter(|(_, points)| *points == &Self::POINTS_READY).count() }
