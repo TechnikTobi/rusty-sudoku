@@ -29,16 +29,6 @@ function setup_websocket()
 	websocket_client = new WebSocket(websocket_uri);
 
 	websocket_client.onopen = () => {
-
-		// Get the player name for registration
-		let registration_request = JSON.stringify(
-			{
-				"PlayerName" : document.getElementById("registerName").value
-			}
-		);
-
-		// Send the registration request & log completion of connection setup
-		websocket_client.send(registration_request);
 		console.log("Done with websocket connection setup!");
 	}
 
@@ -52,10 +42,22 @@ function setup_websocket()
 	}
 
 	websocket_client.onclose = () => {
-
 		console.log('Disconnected')
 		websocket_client = null
 	}
+}
+
+function try_player_registration()
+{
+	// Get the player name for registration
+	let registration_request = JSON.stringify(
+		{
+			"PlayerName" : document.getElementById("registerName").value
+		}
+	);
+
+	// Send the registration request & log completion of connection setup
+	websocket_client.send(registration_request);
 }
 
 function handle_websocket_message
@@ -76,6 +78,10 @@ function handle_websocket_message
 		{
 			websocket_client.close();
 		}
+
+		// Hide the registration elements and show the games section
+		document.getElementById("registration").style.display = "none";
+		document.getElementById("games").style.display = "block";
 
 		return;
 	}
@@ -143,9 +149,10 @@ function registerPlayer()
 		console.assert(websocket_client != null);
 	}
 
-	// Hide the registration elements and show the games section
-	document.getElementById("registration").style.display = "none";
-	document.getElementById("games").style.display = "block";
+	if (playerID == null)
+	{
+		try_player_registration();
+	}
 }
 
 function createGame() 

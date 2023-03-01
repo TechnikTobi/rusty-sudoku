@@ -195,6 +195,14 @@ WebsocketSession
 				// Try different parsings of the data inside the 
 				if let Ok(request) = serde_json::from_str::<PlayerRegistrationRequest>(text)
 				{
+
+					// Don't allow empty player names
+					if request.get_player_name().trim().is_empty()
+					{
+						println!("Wait that's illegal");
+						return;
+					}
+
 					// Create a new player in the SudokuServer
 					let new_player_id = self.server
 						.as_ref()
@@ -250,6 +258,13 @@ WebsocketSession
 				}
 				else if let Ok(request) = serde_json::from_str::<GameCreationRequest>(text)
 				{
+
+					// Don't allow empty game names
+					if request.get_game_name().trim().is_empty()
+					{
+						return;
+					}
+
 					// Create a new game in the SudokuServer
 					let new_game_id = self.server
 						.as_ref()
