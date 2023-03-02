@@ -31,7 +31,7 @@ GameControllerManager
 	)
 	-> GameID
 	{
-		let new_game_controller = GameController::new(master, name, difficulty);
+		let new_game_controller = GameController::new(master, name.trim().to_string(), difficulty);
 		let return_id = new_game_controller.get_game().get_game_id().clone();
 		self.games.insert(return_id, new_game_controller);
 		return return_id;
