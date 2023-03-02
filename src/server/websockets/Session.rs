@@ -6,6 +6,7 @@ use actix_web_actors::ws;
 use std::sync::Mutex;
 
 use crate::board::field::Field;
+use crate::board::difficulty::Difficulty;
 use crate::game::GameID::GameID;
 use crate::game::player::PlayerID::PlayerID;
 
@@ -199,7 +200,6 @@ WebsocketSession
 					// Don't allow empty player names
 					if request.get_player_name().trim().is_empty()
 					{
-						println!("Wait that's illegal");
 						return;
 					}
 
@@ -260,7 +260,13 @@ WebsocketSession
 				{
 
 					// Don't allow empty game names
-					if request.get_game_name().trim().is_empty()
+					// Don't allow games with invalid difficulty
+					let given_difficulty = request.get_difficulty();
+					let bound_difficulty = Difficulty::bound_difficulty(*given_difficulty);
+
+					if 
+						(request.get_game_name().trim().is_empty()) ||
+						(given_difficulty != &bound_difficulty)
 					{
 						return;
 					}
