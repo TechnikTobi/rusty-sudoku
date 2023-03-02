@@ -22,7 +22,7 @@ PlayerManager
 	)
 	-> PlayerID
 	{
-		let new_player = Player::new(name);
+		let new_player = Player::new(name.trim().to_string());
 		let new_player_id = new_player.get_player_id().clone();
 		self.players.insert(new_player_id.clone(), new_player);
 		return new_player_id;
