@@ -1,6 +1,5 @@
 use crate::board::difficulty::Difficulty;
 use crate::game::GameID::GameID;
-use crate::board::board::Board;
 
 use super::EGameState::EGameState;
 
