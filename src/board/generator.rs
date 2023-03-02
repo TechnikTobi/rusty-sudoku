@@ -4,15 +4,13 @@ use rand::seq::SliceRandom;
 use super::position::Position;
 use super::field::Field;
 use super::board::Board;
+use super::difficulty::Difficulty;
 
 impl Board
 {
 
 	pub const MIN_VALUE: u8 = 1;
 	pub const MAX_VALUE: u8 = 9;
-
-	pub const MIN_DIFFICULTY: u8 = 1;
-	pub const MAX_DIFFICULTY: u8 = 60;
 
 	/// Create a new valid Sudoku board that is fully filled with numbers.
 	/// This board can then be used to remove numbers to end up with the final
@@ -87,15 +85,6 @@ impl Board
 		return None;
 	}
 
-	pub fn
-	bound_difficulty
-	(
-		given_difficulty: u8
-	)
-	-> u8
-	{
-		given_difficulty.min(Self::MAX_DIFFICULTY).max(Self::MIN_DIFFICULTY)
-	}
 
 
 	/// Take a fully filled valid Sudoku board and remove fields until
@@ -109,7 +98,7 @@ impl Board
 	{
 		let mut working_board = self.clone();
 		let mut checkpoint_board = self.clone();
-		let difficulty = Self::bound_difficulty(given_difficulty);
+		let difficulty = Difficulty::bound_difficulty(given_difficulty);
 
 		let mut cleared_positions: Vec<Position> = Vec::new();
 		let mut reset_position = Position::random(Self::MAX_X, Self::MAX_Y);

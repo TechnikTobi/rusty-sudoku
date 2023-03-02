@@ -1,3 +1,4 @@
+use crate::board::difficulty::Difficulty;
 use crate::game::GameID::GameID;
 use crate::board::board::Board;
 
@@ -27,7 +28,7 @@ Game
 		{
 			id: GameID::new(),
 			name: name,
-			difficulty: Board::bound_difficulty(difficulty),
+			difficulty: Difficulty::bound_difficulty(difficulty),
 			state: EGameState::READY
 		}
 	}
