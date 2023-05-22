@@ -139,6 +139,7 @@ function handle_websocket_message
 	console.log(data);
 }
 
+// Simply sleeps a given amount of ms
 function sleep(ms) 
 {
 	return new Promise(resolve => setTimeout(resolve, ms));
@@ -146,6 +147,7 @@ function sleep(ms)
 
 
 // Register player with name via POST request
+// Needs to be async due to the call of 'sleep' via await
 async function registerPlayer() 
 {
 	ding.play();
@@ -156,6 +158,7 @@ async function registerPlayer()
 		console.assert(websocket_client != null);
 	}
 
+	// Wait 100ms for the websocket connection to get into the ready state
 	await sleep(100);
 
 	if (playerID == null)
