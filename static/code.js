@@ -139,15 +139,24 @@ function handle_websocket_message
 	console.log(data);
 }
 
-// Register player with name via POST request
-function registerPlayer() 
+function sleep(ms) 
 {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+// Register player with name via POST request
+async function registerPlayer() 
+{
+	ding.play();
 
 	if (websocket_client == null)
 	{
 		setup_websocket();
 		console.assert(websocket_client != null);
 	}
+
+	await sleep(100);
 
 	if (playerID == null)
 	{
