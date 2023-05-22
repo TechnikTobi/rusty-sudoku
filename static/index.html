@@ -8,14 +8,39 @@
 	<body>
 
 		<div id="registration">
-			<input type="text" id="registerName" placeholder="enter your name" value="">
+			<h1>Sudoku!</h1>
+			<input type="text" id="registerName" placeholder="Enter your name" value="">
 			<button id="registerButton" onClick="registerPlayer()" type="submit">Connect</button>
+
+			<br>
+			<br>
+			<br>
+
+			<h4>Quick Start Guide:</h4>
+			<ul>
+				<li>Register yourself to the server (don't worry, this isn't persistent)</li>
+				<li>Either create a game yourself or join an existing one</li>
+				<li>When playing with others, wait until everybody has joined before pressing 'ready'</li>
+				<li>The game starts once everybody is ready!</li>
+			</ul>
 		</div>
 
 		<div id="games">
-			<input type="text" id="gameName" placeholder="enter game name" value="">
-			<input type="number" step="1" min="30" max="60" value="45" id="gameDifficulty" placeholder="enter game difficulty">
+			<h1>Games</h1>
+
+			<b>Create your own game:</b>
+			<input type="text" id="gameName" placeholder="Enter game name" value="">
+			<b>   Difficulty:</b>
+			<input type="number" step="1" min="30" max="60" value="45" id="gameDifficulty" placeholder="Enter game difficulty">
 			<button id="createGameButton" onClick="createGame()" type="submit">Create!</button>
+			<br>
+			<i>The difficulty is an estimate for how many of the 81 fields are blank</i>
+
+			<br>
+			<br>
+			<br>
+
+			<b>Existing games:</b>
 			<table id="gamesTable">
 				<thead>
 					<tr>
