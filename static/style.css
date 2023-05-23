@@ -93,6 +93,13 @@ body{
 	position: relative;
 }
 
+h1 {
+	line-height: 0px;
+}
+
+h4 {
+	line-height: 0px;
+}
 
 #game {
 	display: none;
