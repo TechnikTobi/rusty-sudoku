@@ -158,8 +158,8 @@ async function registerPlayer()
 		console.assert(websocket_client != null);
 	}
 
-	// Wait 100ms for the websocket connection to get into the ready state
-	await sleep(100);
+	// Wait 400ms for the websocket connection to get into the ready state
+	await sleep(400);
 
 	if (playerID == null)
 	{
