@@ -34,7 +34,19 @@ GameControllerManager
 		let new_game_controller = GameController::new(master, name.trim().to_string(), difficulty);
 		let return_id = new_game_controller.get_game().get_game_id().clone();
 		self.games.insert(return_id, new_game_controller);
+		self.cleanup_games();
 		return return_id;
+	}
+
+	/// Removes games that are older than 24 hours
+	fn
+	cleanup_games
+	(
+		&mut self
+	)
+	{
+		let GAME_AGE_LIMIT = 86400;
+		self.games.retain(|_, game_controller| game_controller.get_age() < GAME_AGE_LIMIT);
 	}
 
 	pub fn

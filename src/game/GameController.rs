@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::time::Instant;
 
 use crate::board::field::Field;
 use crate::game::Game::Game;
@@ -18,7 +19,8 @@ GameController
 	game: Game,
 	board_manager: BoardManager,
 	points: HashMap<PlayerID, i64>,
-	master_id: PlayerID
+	master_id: PlayerID,
+	creation_time: Instant,
 }
 
 impl
@@ -42,11 +44,13 @@ GameController
 			board_manager: BoardManager::new(difficulty), 
 			points: HashMap::new(),
 			master_id: master_id,
+			creation_time: Instant::now()
 		}
 	}
 
 	pub fn get_master_id       (&self) -> &PlayerID               { &self.master_id }
 	pub fn get_game            (&self) -> &Game                   { &self.game }
+	pub fn get_age             (&self) -> u64                     { self.creation_time.elapsed().as_secs() }
 	
 	pub fn is_joinable         (&self) -> bool  { self.game.get_state() == &EGameState::READY }
 

@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use crate::{game::player::PlayerID::PlayerID, color::Color::Color, messages::base::PlayerListElement::PlayerListElement};
 
 #[derive(Debug, Clone)]
@@ -7,6 +9,7 @@ Player
 	id: PlayerID,
 	color: Color,
 	name: String,
+	creation_time: Instant,
 }
 
 impl
@@ -23,13 +26,15 @@ Player
 		{ 
 			id: PlayerID::new(), 
 			color: Color::new_random_color(), 
-			name: name 
+			name: name,
+			creation_time: Instant::now()
 		}
 	}
 
 	pub fn get_player_id (&self) -> &PlayerID { &self.id }
 	pub fn get_color     (&self) -> &Color    { &self.color }
 	pub fn get_name      (&self) -> &String   { &self.name }
+	pub fn get_age       (&self) -> u64       { self.creation_time.elapsed().as_secs() }
 
 	pub fn
 	to_network
