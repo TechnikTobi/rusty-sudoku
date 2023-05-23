@@ -118,3 +118,22 @@ body{
 	line-height: 1em;
 	background-color: #111111;
 }
+
+
+
+
+a:link {                                                                        /* Unvisited link */
+	color: #318CE7;
+}
+
+a:visited {                                                                     /* Visited link */
+	color: #318CE7;
+}
+
+a:hover {                                                                       /* Mouse over link */
+	color: #0CAFFF;
+}
+
+a:active {                                                                      /* Selected link */
+	color: azure;
+}
