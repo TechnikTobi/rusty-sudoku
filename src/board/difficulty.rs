@@ -6,7 +6,7 @@ impl
 Difficulty
 {
 	pub const MIN_DIFFICULTY: u8 = 1;
-	pub const MAX_DIFFICULTY: u8 = 60;
+	pub const MAX_DIFFICULTY: u8 = 52;
 
 
 	pub fn
