@@ -100,7 +100,9 @@ impl Board
 		let mut checkpoint_board = self.clone();
 		let difficulty = Difficulty::bound_difficulty(given_difficulty);
 
-		let mut cleared_positions: Vec<Position> = Vec::new();
+		// Keep track of cleared positions
+		let mut cleared_positions:   Vec<Position> = Vec::new();
+
 		let mut reset_position = Position::random(Self::MAX_X, Self::MAX_Y);
 
 		for _ in 0..difficulty
@@ -116,14 +118,30 @@ impl Board
 				working_board = checkpoint_board.clone();
 			}
 
+			// Early stopping: Don't remove more fields than requested
+			if checkpoint_board.count_non_empty_fields() >= difficulty as usize
+			{
+				return checkpoint_board;
+			}
+
 			// Select a random position that hasn't been reset
 			while cleared_positions.contains(&reset_position)
 			{
 				reset_position = Position::random(Self::MAX_X, Self::MAX_Y);
 			}
 
-			working_board.get_mut_field(reset_position).unwrap().set_value(Field::EMPTY_FIELD_VALUE);
-			cleared_positions.push(reset_position);
+			// Also select the mirror of the random position
+			// This has something to do with Sudokus that are symmetric being
+			// "better" in some way
+			let mirrored_position = reset_position.get_mirror(Self::MAX_X, Self::MAX_Y);
+
+			// Reset the fields
+			working_board.get_mut_field(reset_position   ).unwrap().set_value(Field::EMPTY_FIELD_VALUE);
+			working_board.get_mut_field(mirrored_position).unwrap().set_value(Field::EMPTY_FIELD_VALUE);
+
+			// Keep track of fields that have been reset
+			cleared_positions.push(reset_position   );
+			cleared_positions.push(mirrored_position);
 		}
 		
 		return checkpoint_board;
