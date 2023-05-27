@@ -61,4 +61,16 @@ impl Board
 	{
 		self.fields.iter().find(|field| field.get_position() == pos)
 	}
+
+	pub fn
+	count_non_empty_fields
+	(
+		&self
+	)
+	-> usize
+	{
+		self.fields.iter()
+			.filter(|field| field.get_value() == Field::EMPTY_FIELD_VALUE)
+			.count()
+	}
 }
