@@ -40,6 +40,22 @@ Position
 	}
 
 	pub fn
+	get_mirror
+	(
+		&self,
+		x_limit: u8,
+		y_limit: u8
+	)
+	-> Position
+	{
+		Position 
+		{ 
+			x: x_limit-1 - self.x, 
+			y: y_limit-1 - self.y 
+		}
+	}
+
+	pub fn
 	get_x
 	(
 		&self
