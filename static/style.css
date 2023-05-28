@@ -74,7 +74,10 @@ body{
 }
 
 .row {
-	margin-top: 5px;
+	margin-top:    2px;
+	margin-bottom: 2px;
+	margin-left:   2px;
+	margin-right:  2px;
 }
 
 .squareDivider {
@@ -130,11 +133,6 @@ h4 {
 
 /* For letting the entire site blink in case of an illegal move by user */
 @keyframes blink {
-	/*
-	0% { opacity: 1; }
-	50% { opacity: 0; }
-	100% { opacity: 1; }
-	*/
 	0% { background-color: transparent; }
 	50% { background-color: red; }
 	100% { background-color: transparent; }

@@ -368,6 +368,8 @@ function showGame(game)
 
 	if ("Fields" in game)
 	{
+		errorBlink();
+
 		// Show the board (if we have the data)
 		if (game["Fields"].length > 0)
 		{
@@ -417,15 +419,13 @@ function showGame(game)
 
 function errorBlink()
 {
-	console.log("errorBlink called!");
-
-	var element = document.getElementById('registration');
-	element.classList.add('blink-animation');
+	var element = document.getElementById("board");
+	element.classList.add("blink-animation");
 	
 	setTimeout(
 		function() 
 		{
-			element.classList.remove('blink-animation');
+			element.classList.remove("blink-animation");
 		}, 
 		250
 	);
