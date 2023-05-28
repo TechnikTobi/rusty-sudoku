@@ -5,6 +5,7 @@ const websocket_uri = `${websocket_protocol}://${location.host}/websocket`;
 var websocket_client = null;
 
 var playerID = null;
+var playerToken = null;
 var gameID = null;
 
 var selected_x = -1;
@@ -73,6 +74,7 @@ function handle_websocket_message
 	if (playerID == null && "PlayerID" in parsed_data)                          // Got a response to player registration request
 	{
 		playerID = parsed_data["PlayerID"];
+		playerToken = parsed_data["PlayerToken"]["value"];
 
 		if (playerID == null)
 		{
@@ -368,7 +370,6 @@ function showGame(game)
 
 	if ("Fields" in game)
 	{
-		errorBlink();
 
 		// Show the board (if we have the data)
 		if (game["Fields"].length > 0)
@@ -413,6 +414,18 @@ function showGame(game)
 			playerNameCell.style.color = "#" + player["Color"];
 
 			row.insertCell(1).innerHTML = player["Points"];
+		}
+	}
+
+	if ("Lost" in game)
+	{
+		for (let index in game["Lost"])
+		{
+			let losing_player_token = game["Lost"][index]["value"];
+			if (playerToken == losing_player_token)
+			{
+				errorBlink();
+			}
 		}
 	}
 }
