@@ -128,6 +128,24 @@ h4 {
 
 
 
+/* For letting the entire site blink in case of an illegal move by user */
+@keyframes blink {
+	/*
+	0% { opacity: 1; }
+	50% { opacity: 0; }
+	100% { opacity: 1; }
+	*/
+	0% { background-color: transparent; }
+	50% { background-color: red; }
+	100% { background-color: transparent; }
+}
+
+.blink-animation {
+	animation: blink 0.25s linear;
+}
+
+
+
 
 a:link {                                                                        /* Unvisited link */
 	color: #318CE7;

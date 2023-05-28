@@ -414,3 +414,19 @@ function showGame(game)
 		}
 	}
 }
+
+function errorBlink()
+{
+	console.log("errorBlink called!");
+
+	var element = document.getElementById('registration');
+	element.classList.add('blink-animation');
+	
+	setTimeout(
+		function() 
+		{
+			element.classList.remove('blink-animation');
+		}, 
+		250
+	);
+}
