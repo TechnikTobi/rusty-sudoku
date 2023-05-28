@@ -109,14 +109,14 @@ WebSocketServer
 	-> Self::Result 
 	{
 		// Deconstruct the internal message
-		let InternalPlayerRegistrationMessage(network_player_id, recipient, games_list) = msg;
+		let InternalPlayerRegistrationMessage(network_player_id, network_player_token, recipient, games_list) = msg;
 
 		// Add the recipient to the list of clients
 		self.clients.insert(network_player_id.clone(), recipient.clone());
 		
 		// Prepare messages containing the new player's ID and a list of current games
 		let player_id_message = JsonMessage(
-			serde_json::to_string(&PlayerRegistrationResponse::new(network_player_id, "".to_string())).unwrap(), 
+			serde_json::to_string(&PlayerRegistrationResponse::new(network_player_id, network_player_token, "".to_string())).unwrap(), 
 			None
 		);
 		let games_list_message = JsonMessage(

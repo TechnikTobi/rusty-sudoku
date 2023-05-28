@@ -2,6 +2,7 @@ use actix::prelude::*;
 
 use crate::messages::base::NetworkGameIdentifier::NetworkGameIdentifier;
 use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
+use crate::messages::base::NetworkPlayerToken::NetworkPlayerToken;
 use crate::messages::outgoing::GamesListResponse::GamesListResponse;
 use crate::messages::outgoing::GameStateResponse::GameStateResponse;
 
@@ -14,7 +15,7 @@ pub struct JsonMessage(pub String, pub Option<Recipient<JsonMessage>>);
 // INTERNAL
 #[derive(Clone, Message, Debug)]
 #[rtype(result = "()")]
-pub struct InternalPlayerRegistrationMessage(pub NetworkPlayerIdentifier, pub Recipient<JsonMessage>, pub GamesListResponse);
+pub struct InternalPlayerRegistrationMessage(pub NetworkPlayerIdentifier, pub NetworkPlayerToken, pub Recipient<JsonMessage>, pub GamesListResponse);
 
 #[derive(Clone, Message, Debug)]
 #[rtype(result = "()")]

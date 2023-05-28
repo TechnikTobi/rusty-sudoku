@@ -1,14 +1,15 @@
 use serde::Serialize;
 
-use crate::messages::base::NetworkPlayerIdentifier::NetworkPlayerIdentifier;
+use crate::messages::base::{NetworkPlayerIdentifier::NetworkPlayerIdentifier, NetworkPlayerToken::NetworkPlayerToken};
 
 use super::IResponse::IResponse;
 #[derive(Serialize, Debug)]
 pub struct
 PlayerRegistrationResponse
 {
-	PlayerID: NetworkPlayerIdentifier,
-	Message: String,
+	PlayerID:                          NetworkPlayerIdentifier,
+	PlayerToken:                       NetworkPlayerToken,
+	Message:                           String,
 }
 
 impl
@@ -27,6 +28,7 @@ PlayerRegistrationResponse
 	new
 	(
 		player_id: NetworkPlayerIdentifier,
+		player_token: NetworkPlayerToken,
 		message: String,
 	)
 	-> Self
@@ -34,6 +36,7 @@ PlayerRegistrationResponse
 		PlayerRegistrationResponse
 		{
 			PlayerID: player_id,
+			PlayerToken: player_token,
 			Message: message
 		}
 	}

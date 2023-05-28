@@ -218,10 +218,23 @@ WebsocketSession
 						.get_mut_player_manager()
 						.add_player(request.get_player_name().to_owned());
 
+					// Get the token as well
+					let new_player_token = self.server
+						.as_ref()
+						.unwrap()
+						.lock()
+						.unwrap()
+						.get_player_manager()
+						.get_player(&new_player_id)
+						.unwrap()
+						.get_token()
+						.clone();
+
 					// Create a new internal registration message to send to the
 					// Websocket Server instance
 					let registration = InternalPlayerRegistrationMessage(
 						new_player_id.to_network(),
+						new_player_token.to_network(),
 						context.address().recipient(),
 						self.server.as_ref().unwrap().lock().unwrap().generate_games_list_response()
 					);
