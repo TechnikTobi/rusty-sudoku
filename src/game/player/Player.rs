@@ -2,7 +2,7 @@ use std::time::Instant;
 
 use crate::{game::player::PlayerID::PlayerID, color::Color::Color, messages::base::PlayerListElement::PlayerListElement};
 
-use super::PlayerToken;
+use super::PlayerToken::PlayerToken;
 
 #[derive(Debug, Clone)]
 pub struct

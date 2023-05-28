@@ -12,15 +12,18 @@ use super::BoardManager::BoardManager;
 use super::EGameState::*;
 use super::player::Player::Player;
 use super::player::PlayerManager::PlayerManager;
+use super::player::PlayerToken::PlayerToken;
 
 pub struct
 GameController
 {
-	game: Game,
-	board_manager: BoardManager,
-	points: HashMap<PlayerID, i64>,
-	master_id: PlayerID,
-	creation_time: Instant,
+	game:                              Game,
+	board_manager:                     BoardManager,
+	points:                            HashMap<PlayerID, i64>,
+	master_id:                         PlayerID,
+	creation_time:                     Instant,
+	players_who_gained:                Vec<PlayerToken>,
+	players_who_lost:                  Vec<PlayerToken>
 }
 
 impl
@@ -40,11 +43,13 @@ GameController
 	{
 		GameController 
 		{ 
-			game: Game::new(name, difficulty), 
-			board_manager: BoardManager::new(difficulty), 
-			points: HashMap::new(),
-			master_id: master_id,
-			creation_time: Instant::now()
+			game:                      Game::new(name, difficulty), 
+			board_manager:             BoardManager::new(difficulty), 
+			points:                    HashMap::new(),
+			master_id:                 master_id,
+			creation_time:             Instant::now(),
+			players_who_gained:        Vec::new(),
+			players_who_lost:          Vec::new(),
 		}
 	}
 
@@ -131,7 +136,21 @@ GameController
 			
 		}
 
+		self.players_who_gained.iter().for_each(|token| state.add_gaining_player(token.to_network()));
+		self.players_who_lost.iter().for_each(|token| state.add_losing_player(token.to_network()));
+		
+
 		return (state, self.get_player_id_list());
+	}
+
+	pub fn
+	reset_for_next_to_network
+	(
+		&mut self
+	)
+	{
+		self.players_who_gained.clear();
+		self.players_who_lost.clear();
 	}
 
 	pub fn
@@ -168,6 +187,13 @@ GameController
 			player.get_color().to_owned()
 		).points() + self.points.get(player.get_player_id()).unwrap();
 		
+		match self.points.get(player.get_player_id()).unwrap().cmp(&new_points)
+		{
+			std::cmp::Ordering::Greater => self.players_who_lost.push(player.get_token().clone()),
+			std::cmp::Ordering::Equal   => (),
+			std::cmp::Ordering::Less    => self.players_who_gained.push(player.get_token().clone()),
+		}
+
 		self.points.insert(player.get_player_id().to_owned(), new_points);
 
 		if self.board_manager.get_play_board().is_full()

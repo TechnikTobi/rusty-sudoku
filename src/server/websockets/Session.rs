@@ -124,7 +124,7 @@ WebsocketSession
 		game_id: &NetworkGameIdentifier,
 	)
 	{
-		let immut_server = self.server
+		let mut immut_server = self.server
 			.as_ref()
 			.unwrap()
 			.lock()
@@ -135,6 +135,12 @@ WebsocketSession
 			.get_game(&GameID::from_network(game_id))
 			.unwrap()
 			.to_network(immut_server.get_player_manager(), "".to_string());
+
+		immut_server
+			.get_mut_game_controller_manager()
+			.get_mut_game(&GameID::from_network(game_id))
+			.unwrap()
+			.reset_for_next_to_network();
 
 		let message = InternalGameUpdateMessage(game_state, player_list);
 

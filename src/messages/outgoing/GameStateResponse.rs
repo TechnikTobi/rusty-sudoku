@@ -8,11 +8,11 @@ use crate::messages::base::NetworkField::NetworkField;
 pub struct
 GameStateResponse
 {
-	Fields: Vec<NetworkField>,
-	Players: Vec<PlayerListElement>,
-	Message: String,
-	Gain: Vec<NetworkPlayerToken>,
-	Lost: Vec<NetworkPlayerToken>,
+	Fields:                            Vec<NetworkField>,
+	Players:                           Vec<PlayerListElement>,
+	Message:                           String,
+	Gain:                              Vec<NetworkPlayerToken>,
+	Lost:                              Vec<NetworkPlayerToken>,
 }
 
 
@@ -23,21 +23,21 @@ GameStateResponse
 	pub fn
 	new
 	(
-		fields: Vec<NetworkField>,
-		players: Vec<PlayerListElement>,
-		message: String,
-		points_gain: Vec<NetworkPlayerToken>,
-		points_lost: Vec<NetworkPlayerToken>,
+		fields:                        Vec<NetworkField>,
+		players:                       Vec<PlayerListElement>,
+		message:                       String,
+		points_gain:                   Vec<NetworkPlayerToken>,
+		points_lost:                   Vec<NetworkPlayerToken>,
 	)
 	-> Self
 	{
 		GameStateResponse
 		{
-			Fields: fields,
-			Players: players,
-			Message: message,
-			Gain: points_gain,
-			Lost: points_lost,
+			Fields:                    fields,
+			Players:                   players,
+			Message:                   message,
+			Gain:                      points_gain,
+			Lost:                      points_lost,
 		}
 	}
 
@@ -69,5 +69,25 @@ GameStateResponse
 	)
 	{
 		self.Players.push(player);
+	}
+
+	pub fn
+	add_gaining_player
+	(
+		&mut self,
+		player: NetworkPlayerToken
+	)
+	{
+		self.Gain.push(player);
+	}
+
+	pub fn
+	add_losing_player
+	(
+		&mut self,
+		player: NetworkPlayerToken
+	)
+	{
+		self.Lost.push(player);
 	}
 }
