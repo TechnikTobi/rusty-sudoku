@@ -279,16 +279,14 @@ WebsocketSession
 				{
 
 					// Don't allow empty game names
-					// Don't allow games with invalid difficulty
 					let given_difficulty = request.get_difficulty();
-					let bound_difficulty = Difficulty::bound_difficulty(*given_difficulty);
-
-					if 
-						(request.get_game_name().trim().is_empty()) ||
-						(given_difficulty != &bound_difficulty)
+					if request.get_game_name().trim().is_empty()
 					{
 						return;
 					}
+
+					// Bound the difficulty
+					let bound_difficulty = Difficulty::bound_difficulty(*given_difficulty);
 
 					// Create a new game in the SudokuServer
 					let new_game_id = self.server
@@ -300,7 +298,7 @@ WebsocketSession
 						.create_game(
 							PlayerID::from_network(request.get_player_id()), 
 							request.get_game_name().clone(), 
-							request.get_difficulty().clone()
+							bound_difficulty
 					);
 
 					// Automatically join the Master
