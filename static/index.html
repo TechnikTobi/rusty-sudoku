@@ -4,6 +4,16 @@
 		<title>Sudoku!</title>
 		<link href="style.css" rel="stylesheet">
 		<script src="code.js"></script>
+		<script>
+			window.addEventListener(
+				'beforeunload', 
+				function (e) 
+				{
+					e.preventDefault();
+					e.returnValue = '';
+				}
+			);
+		</script>
 	</head>
 	<body>
 
@@ -37,7 +47,7 @@
 
 			<br>
 
-			<i>Made with ❤️ by Tobi - Build 230528-1</i>
+			<i>Made with ❤️ by Tobi - Build 250905-1</i>
 		</div>
 
 		<div id="games">
