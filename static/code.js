@@ -34,7 +34,7 @@ function setup_websocket()
 	}
 
 	websocket_client.onerror = (ev) => {
-		console.log("An error occurded");
+		console.log("An error occurred");
 		console.log(ev);
 	}
 
